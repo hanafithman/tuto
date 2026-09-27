@@ -1,2 +1,3 @@
 *.pt
 dataset.csv
+__pycache__/
