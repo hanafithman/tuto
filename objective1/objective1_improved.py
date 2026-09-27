@@ -29,7 +29,7 @@ import torch.nn as nn
 from sklearn.compose import ColumnTransformer
 from sklearn.ensemble import HistGradientBoostingClassifier
 from sklearn.metrics import accuracy_score, confusion_matrix, f1_score, top_k_accuracy_score
-from sklearn.model_selection import StratifiedKFold, train_test_split
+from sklearn.model_selection import KFold, StratifiedKFold, train_test_split
 from sklearn.preprocessing import LabelEncoder, OneHotEncoder, StandardScaler, TargetEncoder
 from torch.utils.data import DataLoader
 
@@ -71,7 +71,7 @@ class Features:
             ("cat", OneHotEncoder(handle_unknown="ignore", sparse_output=False), cat_cols),
             ("num", StandardScaler(), base.STATIC_NUMERIC),
         ])
-        self.te = TargetEncoder(target_type="multiclass", cv=5) if te_cols else None
+        self.te = TargetEncoder(target_type="multiclass", cv=KFold(5, shuffle=True, random_state=SEED)) if te_cols else None
         self.te_scaler = StandardScaler() if te_cols else None
         self.temporal_scaler = StandardScaler()
 
@@ -111,13 +111,14 @@ class Features:
 # ----------------------------------------------------------------------------------------------
 # Models
 # ----------------------------------------------------------------------------------------------
-def fit_hgb(xs, xt, y, num_classes):
+def fit_hgb(xs, xt, y, xs_va, xt_va, y_va, num_classes):
     X = np.hstack([xs, xt.reshape(len(xt), -1)])
+    X_val = np.hstack([xs_va, xt_va.reshape(len(xt_va), -1)])
     clf = HistGradientBoostingClassifier(
         learning_rate=0.05, max_iter=600, max_leaf_nodes=31, min_samples_leaf=30,
         l2_regularization=1.0, class_weight="balanced", early_stopping=True,
-        validation_fraction=0.1, n_iter_no_change=30, random_state=SEED,
-    ).fit(X, y)
+        n_iter_no_change=30, random_state=SEED,
+    ).fit(X, y, X_val=X_val, y_val=y_va)  # early stopping on the inner validation split
 
     def predict(xs_, xt_):
         p = np.zeros((len(xs_), num_classes))
@@ -203,7 +204,7 @@ def evaluate(df, target, setting, device):
         y_fit, y_val, y_te = y_all[fit_idx], y_all[val_idx], y_all[te_idx]
 
         models = {
-            "HGB": fit_hgb(xs_fit, xt_fit, y_fit, K),
+            "HGB": fit_hgb(xs_fit, xt_fit, y_fit, xs_val, xt_val, y_val, K),
             "Hybrid": fit_hybrid(xs_fit, xt_fit, y_fit, xs_val, xt_val, y_val, K, device),
         }
         val_p = {m: f(xs_val, xt_val) for m, f in models.items()}
