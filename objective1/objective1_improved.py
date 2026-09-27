@@ -42,6 +42,7 @@ N_FOLDS = 5
 MAX_EPOCHS = 80
 PATIENCE = 10
 BATCH_SIZE = 128
+MAX_CLASS_WEIGHT = 10.0
 
 EXTRA_CATEGORICAL = ["TV", "WASHING_MCH", "MIC_OVEN", "DVD", "FRESH", "PHONE", "MOBILE", "JOB"]
 
@@ -134,7 +135,9 @@ def fit_hybrid(xs_tr, xt_tr, y_tr, xs_va, xt_va, y_va, num_classes, device):
     va_loader = DataLoader(base.StudentPathwayDataset(xs_va, xt_va, y_va), batch_size=512)
     model = base.DualBranchHybridModel(xs_tr.shape[1], base.FEATURES_PER_STEP, num_classes,
                                        dropout=0.3).to(device)
-    weights = base.inverse_frequency_weights(y_tr, num_classes).to(device)
+    # c_y = N / (K * N_y), capped: with 21 programs a 1-student class would otherwise get
+    # weight ~400 and the network collapses onto the rarest classes. No-op for the 4 tracks.
+    weights = base.inverse_frequency_weights(y_tr, num_classes).clamp(max=MAX_CLASS_WEIGHT).to(device)
     criterion = nn.CrossEntropyLoss(weight=weights, label_smoothing=0.05)
     optimizer = torch.optim.AdamW(model.parameters(), lr=1e-3, weight_decay=1e-2)
     scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, factor=0.5, patience=3)
@@ -230,7 +233,7 @@ def evaluate(df, target, setting, device):
                 })
                 key = (m, rule)
                 cms[key] = cms.get(key, 0) + confusion_matrix(y_te, pred, labels=np.arange(K))
-        print(f"  [{target} | {setting}] fold {fold}/{N_FOLDS} done")
+        print(f"  [{target} | {setting}] fold {fold}/{N_FOLDS} done", flush=True)
     return pd.DataFrame(rows), cms, names
 
 
@@ -266,7 +269,7 @@ def main():
     pd.set_option("display.max_columns", 20)
     for target in ("MACRO_TRACK", "ACADEMIC_PROGRAM"):
         print("\n" + "=" * 100)
-        print(f"{target}: {N_FOLDS}-fold CV, mean +/- std on held-out folds")
+        print(f"{target}: {N_FOLDS}-fold cross-validation, mean +/- std on held-out folds")
         print("=" * 100)
         s = summary[summary.target == target]
         for _, r in s.iterrows():
