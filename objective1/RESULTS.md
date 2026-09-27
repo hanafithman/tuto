@@ -1,8 +1,103 @@
 # Objective 1 — Results: predicting engineering study pathways
 
+## Primary target: `ACADEMIC_PROGRAM` (21 engineering programs)
+
+Source: `objective1_improved.py` (reproduce with
+`python objective1_improved.py --targets ACADEMIC_PROGRAM`; a re-run matched the recorded
+results exactly). Protocol, leakage controls and feature settings are the same as described
+under "Protocol" below: 5-fold stratified cross-validation, all preprocessing fitted inside
+each training fold, class weights capped at 10.
+
+### Baselines (no model)
+
+| Baseline | Accuracy | Top-2 | Top-3 | Macro-F1 |
+|---|---|---|---|---|
+| Always predict the largest programs (Industrial, then Civil, then Mechanical) | 0.428 | 0.696 | 0.787 | 0.029 |
+| Random guessing in proportion to program frequency (expected) | — | — | — | 0.048 |
+
+### Results (5-fold cross-validation, mean ± std)
+
+| Setting | Model | Accuracy | Macro-F1 | Top-2 | Top-3 |
+|---|---|---|---|---|---|
+| A — original features | HGB | 0.316 ± 0.022 | 0.076 ± 0.005 | 0.576 | 0.744 |
+| | Hybrid (tuned) | 0.225 ± 0.042 | 0.067 ± 0.004 | 0.159 | 0.239 |
+| | Ensemble | 0.315 ± 0.025 | 0.079 ± 0.006 | 0.563 | 0.724 |
+| **B — all pre-enrolment (main result)** | HGB | 0.346 ± 0.013 | 0.087 ± 0.011 | 0.605 | 0.770 |
+| | Hybrid (tuned) | 0.199 ± 0.079 | 0.071 ± 0.003 | 0.124 | 0.211 |
+| | **Ensemble** | **0.344 ± 0.012** | **0.097 ± 0.012** | 0.596 | 0.754 |
+| C — + university (reference; partly leakage) | HGB | 0.571 ± 0.007 | 0.416 ± 0.039 | 0.816 | 0.920 |
+| | Hybrid (tuned) | 0.511 ± 0.033 | 0.453 ± 0.023 | 0.649 | 0.759 |
+| | Ensemble | 0.557 ± 0.011 | 0.483 ± 0.014 | 0.792 | 0.907 |
+
+(HGB and Ensemble rows use argmax; the hybrid rows use its better decision rule, the
+validation-tuned one.)
+
+### Per-program F1 (best model per setting: Ensemble, argmax)
+
+| Program | Students | Macro-track | F1, pre-enrolment (B) | F1, + university (C) |
+|---|---|---|---|---|
+| Industrial | 5,318 | Industrial & Mgmt | 0.49 | 0.65 |
+| Civil | 3,320 | Civil & Infra | 0.34 | 0.60 |
+| Mechanical | 1,135 | Mech/Elec/Tech | 0.22 | 0.37 |
+| Chemical | 1,000 | Chemical & Process | 0.24 | 0.60 |
+| Electronic | 849 | Mech/Elec/Tech | 0.14 | 0.38 |
+| Electric | 278 | Mech/Elec/Tech | 0.07 | 0.21 |
+| Mechatronics | 82 | Mech/Elec/Tech | 0.00 | 0.76 |
+| Catastral & Geodesy | 78 | Civil & Infra | 0.04 | 0.44 |
+| Production | 60 | Industrial & Mgmt | 0.00 | 0.27 |
+| Electric & Telecommunications | 47 | Mech/Elec/Tech | 0.03 | 0.21 |
+| Aeronautical | 44 | Mech/Elec/Tech | 0.00 | 0.61 |
+| Topographic | 42 | Civil & Infra | 0.00 | 0.29 |
+| Electromechanical | 34 | Mech/Elec/Tech | 0.00 | 0.17 |
+| Productivity & Quality | 29 | Industrial & Mgmt | 0.00 | 0.97 |
+| Transportation & Road | 27 | Civil & Infra | 0.23 | 0.59 |
+| Industrial Automatic | 22 | Mech/Elec/Tech | 0.00 | 0.98 |
+| Control | 20 | Mech/Elec/Tech | 0.00 | 0.04 |
+| Civil Constructions | 14 | Civil & Infra | 0.08 | 0.94 |
+| Automation | 10 | Mech/Elec/Tech | 0.00 | 0.28 |
+| Industrial Control & Automation | 1 | Mech/Elec/Tech | 0.00 | 0.00 |
+| Textile | 1 | Chemical & Process | 0.00 | 0.00 |
+
+Heatmaps: `confusion_matrix_program_pre_enrolment.png` (setting B) and
+`confusion_matrix_program_plus_university.png` (setting C). Programs are grouped by
+macro-track.
+
+### Interpretation
+
+- **Pre-enrolment information barely identifies the program.** With all pre-enrolment
+  variables, macro-F1 is 0.097 ± 0.012: above chance (≈0.05) and above always predicting
+  Industrial (0.03). But accuracy (0.34) and top-3 accuracy (0.75–0.77) are *below* the
+  trivial rule "recommend the largest programs" (0.43 and 0.79). The class weighting trades
+  majority-class accuracy for coverage of smaller programs, and the features do not carry
+  enough signal to make that trade pay off.
+- **15 of 21 programs have fewer than 100 students**, and two have exactly one. With
+  pre-enrolment features, 13 programs have F1 ≤ 0.04. The two single-student programs can
+  never be scored in a held-out fold.
+- **The hybrid network is the weakest model for this target.** Its accuracy (0.20–0.23) is well
+  below gradient boosting (0.32–0.35); most of the rare classes are too small for it to learn.
+  This should be reported as a negative result for the architecture.
+- **University raises macro-F1 to 0.48, but mostly through leakage.** The very high scores for
+  small programs (Productivity & Quality 0.97, Industrial Automatic 0.98, Civil Constructions
+  0.94) arise because each of those programs appears at a single university in the data, and
+  every student of that university in the data is in that program, so the university names the
+  program outright. This setting is an upper reference, not a prediction of choice.
+- **Where the errors fall (setting B heatmap):** most students of every program are predicted as
+  Industrial, Civil, Mechanical, Electronic or Chemical, i.e. the five largest programs. The
+  errors are spread across all four macro-tracks rather than staying within a track.
+
+### Conclusion for the program-level target
+
+Saber 11 scores and socioeconomic background do not predict which of 21 engineering programs a
+student enrols in beyond a weak signal: macro-F1 0.10 ± 0.01, with no program above 0.49 and
+accuracy below the majority baseline. No program reaches F1 0.8 with pre-enrolment information.
+
+---
+
 All numbers below come from `objective1_improved.py` (log: `improved_results.log`,
 tables: `improved_results_summary.csv`, `improved_results_per_class.csv`) and
 `objective1_hybrid_model.py` (single 80/10/10 split). Nothing here is estimated by hand.
+
+# Macro-track target (4 classes) and shared protocol
 
 ## Data
 
