@@ -1,0 +1,41 @@
+Loaded 12411 records. Device: cpu
+Target: Saber Pro global score (G_SC) >= training-fold median (overall median 163)
+  [A_saber11_socioeconomic] fold 1/5 done
+  [A_saber11_socioeconomic] fold 2/5 done
+  [A_saber11_socioeconomic] fold 3/5 done
+  [A_saber11_socioeconomic] fold 4/5 done
+  [A_saber11_socioeconomic] fold 5/5 done
+  [B_all_pre_enrolment] fold 1/5 done
+  [B_all_pre_enrolment] fold 2/5 done
+  [B_all_pre_enrolment] fold 3/5 done
+  [B_all_pre_enrolment] fold 4/5 done
+  [B_all_pre_enrolment] fold 5/5 done
+  [C_at_enrolment] fold 1/5 done
+  [C_at_enrolment] fold 2/5 done
+  [C_at_enrolment] fold 3/5 done
+  [C_at_enrolment] fold 4/5 done
+  [C_at_enrolment] fold 5/5 done
+
+==============================================================================================================
+Saber Pro above vs below median - 5-fold cross-validation, mean +/- std
+==============================================================================================================
+A_saber11_socioeconomic   Ensemble  acc 0.805+/-0.013  macroF1 0.805+/-0.013  AUC 0.891  F1 below 0.805+/-0.015  F1 above 0.805+/-0.011  both>0.8: YES
+A_saber11_socioeconomic   HGB       acc 0.805+/-0.009  macroF1 0.805+/-0.009  AUC 0.888  F1 below 0.803+/-0.011  F1 above 0.807+/-0.008  both>0.8: YES
+A_saber11_socioeconomic   Hybrid    acc 0.803+/-0.009  macroF1 0.803+/-0.009  AUC 0.891  F1 below 0.798+/-0.011  F1 above 0.808+/-0.012  both>0.8: no
+B_all_pre_enrolment       Ensemble  acc 0.804+/-0.011  macroF1 0.803+/-0.011  AUC 0.891  F1 below 0.798+/-0.016  F1 above 0.809+/-0.011  both>0.8: no
+B_all_pre_enrolment       HGB       acc 0.801+/-0.010  macroF1 0.801+/-0.010  AUC 0.887  F1 below 0.796+/-0.012  F1 above 0.807+/-0.010  both>0.8: no
+B_all_pre_enrolment       Hybrid    acc 0.806+/-0.010  macroF1 0.806+/-0.010  AUC 0.891  F1 below 0.803+/-0.017  F1 above 0.809+/-0.007  both>0.8: YES
+C_at_enrolment            Ensemble  acc 0.810+/-0.010  macroF1 0.810+/-0.010  AUC 0.896  F1 below 0.806+/-0.014  F1 above 0.814+/-0.012  both>0.8: YES
+C_at_enrolment            HGB       acc 0.809+/-0.009  macroF1 0.809+/-0.009  AUC 0.894  F1 below 0.804+/-0.013  F1 above 0.814+/-0.012  both>0.8: YES
+C_at_enrolment            Hybrid    acc 0.810+/-0.010  macroF1 0.810+/-0.010  AUC 0.896  F1 below 0.806+/-0.011  F1 above 0.815+/-0.013  both>0.8: YES
+
+Confusion matrices (summed over folds; rows = actual, cols = predicted [below, above]):
+  A_saber11_socioeconomic   HGB       [[4928, 1166], [1255, 5062]]
+  A_saber11_socioeconomic   Hybrid    [[4826, 1268], [1175, 5142]]
+  A_saber11_socioeconomic   Ensemble  [[4998, 1096], [1327, 4990]]
+  B_all_pre_enrolment       HGB       [[4801, 1293], [1174, 5143]]
+  B_all_pre_enrolment       Hybrid    [[4912, 1182], [1221, 5096]]
+  B_all_pre_enrolment       Ensemble  [[4831, 1263], [1172, 5145]]
+  C_at_enrolment            HGB       [[4871, 1223], [1144, 5173]]
+  C_at_enrolment            Hybrid    [[4881, 1213], [1140, 5177]]
+  C_at_enrolment            Ensemble  [[4895, 1199], [1157, 5160]]

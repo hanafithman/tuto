@@ -126,3 +126,54 @@ pip install -r requirements.txt
 python objective1_hybrid_model.py   # single-split baseline, ~20 s on CPU
 python objective1_improved.py       # 5-fold CV experiment, ~15 min on CPU
 ```
+
+---
+
+# Reframed Objective 1 — predicting Saber Pro performance (above vs below median)
+
+Script: `objective1_performance.py` (log: `performance_results.log`, tables:
+`performance_results_summary.csv`, `performance_results_folds.csv`).
+
+**Target:** Saber Pro global score `G_SC` ≥ median, where the median is computed on each
+training fold only (overall median 163). The two classes are therefore balanced (≈50/50).
+
+**Leakage controls:** `G_SC`, `PERCENTILE`, `2ND_DECILE`, `QUARTILE` (all derived from the
+target) and the Saber Pro sub-scores are excluded from the features. The temporal branch of the
+hybrid model uses the 5 Saber 11 subject scores as a 5-step sequence. The decision threshold is
+tuned on an inner validation split only.
+
+**Settings:** A = socioeconomic + Saber 11; B = A + all other pre-enrolment variables and
+high-school name; C = B + university and program (known at enrolment, still before the exam).
+
+5-fold cross-validation, mean ± std:
+
+| Setting | Model | Accuracy | Macro-F1 | ROC-AUC | F1 below median | F1 above median |
+|---|---|---|---|---|---|---|
+| A — Saber 11 + socioeconomic | HGB | 0.805 ± 0.009 | 0.805 | 0.888 | 0.803 ± 0.011 | 0.807 ± 0.008 |
+| | Hybrid | 0.803 ± 0.009 | 0.803 | 0.891 | 0.798 ± 0.011 | 0.808 ± 0.012 |
+| | Ensemble | 0.805 ± 0.013 | 0.805 | 0.891 | 0.805 ± 0.015 | 0.805 ± 0.011 |
+| B — all pre-enrolment | HGB | 0.801 ± 0.010 | 0.801 | 0.887 | 0.796 ± 0.012 | 0.807 ± 0.010 |
+| | Hybrid | 0.806 ± 0.010 | 0.806 | 0.891 | 0.803 ± 0.017 | 0.809 ± 0.007 |
+| | Ensemble | 0.804 ± 0.011 | 0.803 | 0.891 | 0.798 ± 0.016 | 0.809 ± 0.011 |
+| C — at enrolment | HGB | 0.809 ± 0.009 | 0.809 | 0.894 | 0.804 ± 0.013 | 0.814 ± 0.012 |
+| | Hybrid | 0.810 ± 0.010 | 0.810 | 0.896 | 0.806 ± 0.011 | 0.815 ± 0.013 |
+| | Ensemble | **0.810 ± 0.010** | **0.810** | **0.896** | **0.806 ± 0.014** | **0.814 ± 0.012** |
+
+Confusion matrix, setting C, hybrid model (summed over the 5 held-out folds):
+
+| Actual \ Predicted | Below median | Above median |
+|---|---|---|
+| Below median (6,094) | **4,881** | 1,213 |
+| Above median (6,317) | 1,140 | **5,177** |
+
+**How robust is "above 0.8"?** On average, both classes exceed 0.8 for 7 of the 9
+model/setting combinations. The margin is small (0.80–0.815) compared with the fold-to-fold
+standard deviation (≈0.01): looking at individual folds, both classes exceed 0.8 in only 1–3
+of the 5 folds, and the lowest single-fold class F1 is 0.784. The honest statement is
+"per-class F1 ≈ 0.80–0.81 (5-fold mean)", not "reliably above 0.8".
+
+**Conclusion (reframed objective):** Saber 11 scores and socioeconomic background predict
+whether a student will finish in the top or bottom half of the end-of-degree Saber Pro exam
+with ≈80% accuracy and per-class F1 ≈ 0.80 (ROC-AUC ≈ 0.89). Adding university and program
+raises this slightly, to 0.81 (AUC 0.90). The dual-branch hybrid network matches gradient
+boosting but does not outperform it.
