@@ -153,6 +153,10 @@ Per-class F1 (same models):
 No class reaches 0.8 in any setting. The highest per-class F1 obtained anywhere is 0.69
 (Industrial & Management, setting C).
 
+Heatmap for all three settings: `confusion_matrix_macro_track_cv.png`. A re-run
+(`python objective1_improved.py --targets MACRO_TRACK`, log `macro_track_results.log`)
+reproduced every number in this section exactly.
+
 Confusion matrix, setting B (summed over the 5 held-out folds; rows = actual):
 
 | Actual \ Predicted | Chemical | Civil | Industrial | Mech/Elec | Recall |

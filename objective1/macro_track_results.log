@@ -1,1 +1,43 @@
 Loaded 12411 records. Device: cpu
+  [MACRO_TRACK | A_original_features] fold 1/5 done
+  [MACRO_TRACK | A_original_features] fold 2/5 done
+  [MACRO_TRACK | A_original_features] fold 3/5 done
+  [MACRO_TRACK | A_original_features] fold 4/5 done
+  [MACRO_TRACK | A_original_features] fold 5/5 done
+  [MACRO_TRACK | B_all_pre_enrolment] fold 1/5 done
+  [MACRO_TRACK | B_all_pre_enrolment] fold 2/5 done
+  [MACRO_TRACK | B_all_pre_enrolment] fold 3/5 done
+  [MACRO_TRACK | B_all_pre_enrolment] fold 4/5 done
+  [MACRO_TRACK | B_all_pre_enrolment] fold 5/5 done
+  [MACRO_TRACK | C_plus_UNIVERSITY_enrolment_time] fold 1/5 done
+  [MACRO_TRACK | C_plus_UNIVERSITY_enrolment_time] fold 2/5 done
+  [MACRO_TRACK | C_plus_UNIVERSITY_enrolment_time] fold 3/5 done
+  [MACRO_TRACK | C_plus_UNIVERSITY_enrolment_time] fold 4/5 done
+  [MACRO_TRACK | C_plus_UNIVERSITY_enrolment_time] fold 5/5 done
+
+====================================================================================================
+MACRO_TRACK: 5-fold cross-validation, mean +/- std on held-out folds
+====================================================================================================
+A_original_features                Ensemble  argmax         acc 0.373+/-0.019  macroF1 0.345+/-0.016  top2 0.670  top3 0.895
+A_original_features                Ensemble  macroF1-tuned  acc 0.411+/-0.025  macroF1 0.367+/-0.019  top2 0.670  top3 0.895
+A_original_features                HGB       argmax         acc 0.379+/-0.015  macroF1 0.347+/-0.014  top2 0.681  top3 0.903
+A_original_features                HGB       macroF1-tuned  acc 0.406+/-0.028  macroF1 0.349+/-0.013  top2 0.681  top3 0.903
+A_original_features                Hybrid    argmax         acc 0.340+/-0.030  macroF1 0.318+/-0.032  top2 0.644  top3 0.873
+A_original_features                Hybrid    macroF1-tuned  acc 0.413+/-0.017  macroF1 0.363+/-0.012  top2 0.644  top3 0.873
+B_all_pre_enrolment                Ensemble  argmax         acc 0.390+/-0.013  macroF1 0.363+/-0.012  top2 0.689  top3 0.899
+B_all_pre_enrolment                Ensemble  macroF1-tuned  acc 0.415+/-0.018  macroF1 0.374+/-0.021  top2 0.689  top3 0.899
+B_all_pre_enrolment                HGB       argmax         acc 0.402+/-0.006  macroF1 0.364+/-0.012  top2 0.702  top3 0.909
+B_all_pre_enrolment                HGB       macroF1-tuned  acc 0.404+/-0.020  macroF1 0.363+/-0.014  top2 0.702  top3 0.909
+B_all_pre_enrolment                Hybrid    argmax         acc 0.349+/-0.023  macroF1 0.329+/-0.022  top2 0.645  top3 0.874
+B_all_pre_enrolment                Hybrid    macroF1-tuned  acc 0.422+/-0.017  macroF1 0.371+/-0.008  top2 0.645  top3 0.874
+C_plus_UNIVERSITY_enrolment_time   Ensemble  argmax         acc 0.617+/-0.008  macroF1 0.607+/-0.007  top2 0.879  top3 0.980
+C_plus_UNIVERSITY_enrolment_time   Ensemble  macroF1-tuned  acc 0.628+/-0.014  macroF1 0.612+/-0.017  top2 0.879  top3 0.980
+C_plus_UNIVERSITY_enrolment_time   HGB       argmax         acc 0.616+/-0.007  macroF1 0.606+/-0.007  top2 0.881  top3 0.980
+C_plus_UNIVERSITY_enrolment_time   HGB       macroF1-tuned  acc 0.620+/-0.012  macroF1 0.604+/-0.016  top2 0.881  top3 0.980
+C_plus_UNIVERSITY_enrolment_time   Hybrid    argmax         acc 0.603+/-0.006  macroF1 0.594+/-0.005  top2 0.866  top3 0.972
+C_plus_UNIVERSITY_enrolment_time   Hybrid    macroF1-tuned  acc 0.627+/-0.009  macroF1 0.608+/-0.014  top2 0.866  top3 0.972
+
+Per-class F1 of the best (model, rule) per setting:
+  A_original_features [Ensemble, macroF1-tuned]: Chemical & Process=0.236, Civil & Infrastructure=0.311, Industrial & Management=0.518, Mechanical, Electrical & Tech=0.401
+  B_all_pre_enrolment [Ensemble, macroF1-tuned]: Chemical & Process=0.249, Civil & Infrastructure=0.352, Industrial & Management=0.521, Mechanical, Electrical & Tech=0.373
+  C_plus_UNIVERSITY_enrolment_time [Ensemble, macroF1-tuned]: Chemical & Process=0.592, Civil & Infrastructure=0.613, Industrial & Management=0.686, Mechanical, Electrical & Tech=0.556
