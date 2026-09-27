@@ -15,11 +15,13 @@ What this adds over objective1_hybrid_model.py (all fitted inside each training 
 
 Usage:
     python objective1_improved.py          # expects dataset.csv in the current directory
+    python objective1_improved.py --targets ACADEMIC_PROGRAM   # program target only
 Outputs:
     improved_results_summary.csv, improved_results_per_class.csv,
     confusion_matrix_improved_<setting>.csv
 """
 
+import argparse
 import warnings
 
 import numpy as np
@@ -238,12 +240,19 @@ def evaluate(df, target, setting, device):
 
 
 def main():
+    parser = argparse.ArgumentParser(description=__doc__.split("\n")[1])
+    parser.add_argument("--targets", nargs="+", default=["MACRO_TRACK", "ACADEMIC_PROGRAM"],
+                        choices=["MACRO_TRACK", "ACADEMIC_PROGRAM"],
+                        help="targets to evaluate (default: both)")
+    targets = parser.parse_args().targets
+    # Running a subset writes to separate files so the full-run tables are not overwritten.
+    suffix = "" if len(targets) == 2 else f"_{'_'.join(targets)}"
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     df = load()
     print(f"Loaded {len(df)} records. Device: {device}")
 
     all_rows, best = [], {}
-    for target in ("MACRO_TRACK", "ACADEMIC_PROGRAM"):
+    for target in targets:
         for setting in SETTINGS:
             res, cms, names = evaluate(df, target, setting, device)
             all_rows.append(res)
@@ -258,16 +267,16 @@ def main():
     summary = res.groupby(["target", "setting", "model", "rule"])[metrics].agg(["mean", "std"])
     summary.columns = [f"{a}_{b}" for a, b in summary.columns]
     summary = summary.reset_index()
-    summary.to_csv("improved_results_summary.csv", index=False)
+    summary.to_csv(f"improved_results_summary{suffix}.csv", index=False)
 
     f1_cols = [c for c in res.columns if c.startswith("F1::")]
     per_class = (res.groupby(["target", "setting", "model", "rule"])[f1_cols].mean()
                  .dropna(axis=1, how="all").reset_index())
-    per_class.to_csv("improved_results_per_class.csv", index=False)
+    per_class.to_csv(f"improved_results_per_class{suffix}.csv", index=False)
 
     pd.set_option("display.width", 220)
     pd.set_option("display.max_columns", 20)
-    for target in ("MACRO_TRACK", "ACADEMIC_PROGRAM"):
+    for target in targets:
         print("\n" + "=" * 100)
         print(f"{target}: {N_FOLDS}-fold cross-validation, mean +/- std on held-out folds")
         print("=" * 100)
