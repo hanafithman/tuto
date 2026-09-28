@@ -1,3 +1,4 @@
 *.pt
 dataset.csv
 __pycache__/
+rigorous_*/oof_proba_*.npy
