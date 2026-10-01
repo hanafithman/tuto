@@ -146,7 +146,10 @@ def load_and_prepare(path: str) -> pd.DataFrame:
             f"'{path}' not found in {os.getcwd()}. Upload dataset.csv to the "
             "Colab working directory (/content) and re-run."
         )
-    df = pd.read_csv(path)
+    try:
+        df = pd.read_csv(path)
+    except UnicodeDecodeError:  # the original Saber 11/Pro export is Latin-1
+        df = pd.read_csv(path, encoding="latin-1")
     df.columns = df.columns.str.strip()
     print(f"[Data] Loaded {df.shape[0]:,} rows x {df.shape[1]} columns.")
 
