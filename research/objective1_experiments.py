@@ -567,13 +567,16 @@ def compute_metrics(probs, y_true, y_macro_true, label_to_macro_idx, n_macro, gr
 
 def run_experiment(df, label_col=TARGET, label_to_track=None, weighted=True,
                    temporal_features=TEMPORAL_FEATURES, time_steps=TIME_STEPS,
-                   summary_csv=SUMMARY_CSV, fold_csv=FOLD_CSV, title="OBJECTIVE 1"):
+                   summary_csv=SUMMARY_CSV, fold_csv=FOLD_CSV, title="OBJECTIVE 1",
+                   oof_npz=None):
     """Stratified 5-fold CV of every model in MODEL_REGISTRY.
 
     label_col       : column the models are trained on (majors, grouped majors or tracks).
     label_to_track  : dict label -> macro-track; defaults to PROGRAM_TO_TRACK, or the
                       identity when training directly on MACRO_TRACK.
     weighted        : inverse-frequency class weights (torch) / class_weight='balanced'.
+    oof_npz         : optional path; saves every model's out-of-fold probabilities
+                      (for confusion matrices and per-class analysis).
     """
     t0 = time.time()
     assert len(temporal_features) % time_steps == 0
@@ -603,6 +606,8 @@ def run_experiment(df, label_col=TARGET, label_to_track=None, weighted=True,
     continuous, nominal = split_static_types(df)
     skf = StratifiedKFold(n_splits=N_SPLITS, shuffle=True, random_state=SEED)
     records = []
+    model_names = list(MODEL_REGISTRY)
+    oof = np.zeros((len(model_names), len(df), n_classes), dtype=np.float32)
 
     for fold, (tr_idx, va_idx) in enumerate(skf.split(df, y), start=1):
         print(f"\n{'=' * 78}\nFOLD {fold}/{N_SPLITS}  (train={len(tr_idx):,}, val={len(va_idx):,})\n{'=' * 78}")
@@ -625,6 +630,7 @@ def run_experiment(df, label_col=TARGET, label_to_track=None, weighted=True,
             else:
                 probs = train_torch_model(factory, Xs_tr, Xseq_tr, y_tr, Xs_va, Xseq_va,
                                           n_classes, class_w, seed=SEED + fold)
+            oof[model_names.index(name), va_idx] = probs
             m = compute_metrics(probs, y_va, ym_va, label_to_macro_idx, n_macro, granular)
             records.append({"Fold": fold, "Model": name, "Category": category, **m})
             line = (f"  {name:<36s} | Track {m['Macro-Track Top-1 Acc (%)']:6.2f}% "
@@ -637,6 +643,10 @@ def run_experiment(df, label_col=TARGET, label_to_track=None, weighted=True,
 
     fold_df = pd.DataFrame(records)
     fold_df.to_csv(fold_csv, index=False)
+    if oof_npz:
+        np.savez_compressed(oof_npz, probs=oof, models=np.array(model_names),
+                            y=y, y_macro=y_macro, labels=np.array(labels),
+                            macros=np.array(macros), label_to_macro_idx=label_to_macro_idx)
 
     # ---- Statistical significance: paired t-test on the primary metric ------
     wide = fold_df.pivot(index="Fold", columns="Model", values=primary)

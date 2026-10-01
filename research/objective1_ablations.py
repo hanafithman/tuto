@@ -18,7 +18,8 @@ Each experiment changes ONE factor relative to the baseline protocol in
   E5  Final granular    : E3 grouping + no class weights + no Saber Pro.
   E6  Final macro-track : 4-class training + no class weights + no Saber Pro.
 
-Outputs per experiment: objective1_<tag>_results.csv and objective1_<tag>_folds.csv,
+Outputs per experiment: objective1_<tag>_results.csv, objective1_<tag>_folds.csv and
+objective1_<tag>_oof.npz (out-of-fold probabilities),
 plus objective1_ablation_overview.csv comparing the key metrics across experiments.
 
 Usage: put dataset.csv and objective1_experiments.py in the working directory, then
@@ -95,7 +96,8 @@ def main(selected):
             continue
         summary, _ = base.run_experiment(
             df_grouped, summary_csv=f"objective1_{tag}_results.csv",
-            fold_csv=f"objective1_{tag}_folds.csv", **cfg)
+            fold_csv=f"objective1_{tag}_folds.csv",
+            oof_npz=f"objective1_{tag}_oof.npz", **cfg)
         for _, r in summary.iterrows():
             overview.append({
                 "Experiment": cfg["title"], "Model": r["Model"],
