@@ -14,9 +14,12 @@ Protocol
   predictions are obtained by summing the granular class probabilities that
   belong to each track and taking the argmax, so a single model yields both the
   granular recommendation and the macro-track prediction consistently.
-* Metrics per fold: Macro-Track Top-1 Acc, Granular Top-1 Acc, Granular Top-3
-  Acc, Granular Macro-F1. Paired t-tests (scipy.stats.ttest_rel) on fold-wise
-  Macro-F1: Proposed model vs. every other model.
+* Metrics per fold: Macro-Track Top-1 Acc and Macro-F1, Granular Top-1 Acc,
+  Granular Top-3 Acc, Granular Macro-F1. Paired t-tests (scipy.stats.ttest_rel)
+  on fold-wise Macro-F1: Proposed model vs. every other model.
+* A majority-class model is included as a reference floor.
+* `run_experiment` is parameterised (training label, class weighting, temporal
+  features); `objective1_ablations.py` uses it for the follow-up experiments.
 
 Usage (Google Colab)
 --------------------
@@ -41,6 +44,7 @@ import torch.nn.functional as F
 from torch.utils.data import DataLoader, TensorDataset
 
 from sklearn.compose import ColumnTransformer
+from sklearn.dummy import DummyClassifier
 from sklearn.ensemble import HistGradientBoostingClassifier, RandomForestClassifier
 from sklearn.impute import SimpleImputer
 from sklearn.linear_model import LogisticRegression
@@ -229,7 +233,8 @@ def build_temporal_transformer() -> Pipeline:
     ])
 
 
-def preprocess_fold(df_tr, df_va, continuous, nominal):
+def preprocess_fold(df_tr, df_va, continuous, nominal,
+                    temporal_features=TEMPORAL_FEATURES, time_steps=TIME_STEPS):
     """Fit transformers on training fold only; return arrays for both folds."""
     static_tf = build_static_transformer(continuous, nominal)
     temporal_tf = build_temporal_transformer()
@@ -243,12 +248,13 @@ def preprocess_fold(df_tr, df_va, continuous, nominal):
     Xs_tr = static_tf.fit_transform(tr_static).astype(np.float32)
     Xs_va = static_tf.transform(va_static).astype(np.float32)
 
-    Xt_tr = temporal_tf.fit_transform(df_tr[TEMPORAL_FEATURES]).astype(np.float32)
-    Xt_va = temporal_tf.transform(df_va[TEMPORAL_FEATURES]).astype(np.float32)
+    Xt_tr = temporal_tf.fit_transform(df_tr[temporal_features]).astype(np.float32)
+    Xt_va = temporal_tf.transform(df_va[temporal_features]).astype(np.float32)
 
     # Sequence tensors: (Batch, TimeSteps, FeaturesPerStep)
-    Xseq_tr = Xt_tr.reshape(-1, TIME_STEPS, FEATS_PER_STEP)
-    Xseq_va = Xt_va.reshape(-1, TIME_STEPS, FEATS_PER_STEP)
+    feats_per_step = len(temporal_features) // time_steps
+    Xseq_tr = Xt_tr.reshape(-1, time_steps, feats_per_step)
+    Xseq_va = Xt_va.reshape(-1, time_steps, feats_per_step)
 
     # Flat representation for traditional ML
     Xflat_tr = np.hstack([Xs_tr, Xt_tr])
@@ -375,10 +381,12 @@ class HybridTransformer(nn.Module):
     """Hybrid Baseline 4: Static MLP + TransformerEncoderLayer(d_model=feats, nhead=1)
     with learned positional embedding -> mean pool -> Linear(64)."""
 
+    MAX_STEPS = 16
+
     def __init__(self, static_dim, seq_feats, n_classes):
         super().__init__()
         self.static = StaticMLP(static_dim)
-        self.pos = nn.Parameter(torch.zeros(1, TIME_STEPS, seq_feats))
+        self.pos = nn.Parameter(torch.zeros(1, self.MAX_STEPS, seq_feats))
         self.encoder = nn.TransformerEncoderLayer(
             d_model=seq_feats, nhead=1, dim_feedforward=64,
             dropout=DROPOUT, batch_first=True,
@@ -388,7 +396,7 @@ class HybridTransformer(nn.Module):
 
     def forward(self, xs, xt):
         zs = self.static(xs)
-        e = self.encoder(xt + self.pos)
+        e = self.encoder(xt + self.pos[:, :xt.size(1)])
         zt = F.relu(self.proj(e.mean(dim=1)))
         return self.head(torch.cat([zs, zt], dim=1))
 
@@ -433,18 +441,22 @@ class ProposedDualBranch(nn.Module):
 
 
 PROPOSED = "Proposed: MLP + Causal TCN + LSTM"
+REFERENCE = "Majority Class (reference)"
 
-# name -> (category, kind, factory)
+# name -> (category, kind, factory). sklearn factories take the class_weight
+# argument ("balanced" or None); torch factories are the nn.Module classes.
 MODEL_REGISTRY = {
+    REFERENCE: ("0: Reference", "sklearn",
+                lambda cw: DummyClassifier(strategy="prior")),
     "Logistic Regression": ("A: Traditional ML", "sklearn",
-                            lambda: LogisticRegression(max_iter=3000, class_weight="balanced",
-                                                       random_state=SEED)),
+                            lambda cw: LogisticRegression(max_iter=3000, class_weight=cw,
+                                                          random_state=SEED)),
     "Random Forest": ("A: Traditional ML", "sklearn",
-                      lambda: RandomForestClassifier(n_estimators=100, class_weight="balanced",
-                                                     n_jobs=-1, random_state=SEED)),
+                      lambda cw: RandomForestClassifier(n_estimators=100, class_weight=cw,
+                                                        n_jobs=-1, random_state=SEED)),
     "HistGradientBoosting": ("A: Traditional ML", "sklearn",
-                             lambda: HistGradientBoostingClassifier(class_weight="balanced",
-                                                                    random_state=SEED)),
+                             lambda cw: HistGradientBoostingClassifier(class_weight=cw,
+                                                                       random_state=SEED)),
     "Static MLP Only": ("B: Single-Branch Deep", "torch", StaticMLPOnly),
     "Standalone LSTM": ("B: Single-Branch Deep", "torch", StandaloneLSTM),
     "Hybrid 1: MLP + CNN + LSTM": ("C: Hybrid Baseline", "torch", HybridCNNLSTM),
@@ -500,8 +512,8 @@ def train_torch_model(model_cls, Xs_tr, Xseq_tr, y_tr, Xs_va, Xseq_va, n_classes
     return np.vstack(probs)
 
 
-def train_sklearn_model(factory, X_tr, y_tr, X_va, n_classes):
-    model = factory()
+def train_sklearn_model(factory, X_tr, y_tr, X_va, n_classes, class_weight):
+    model = factory(class_weight)
     model.fit(X_tr, y_tr)
     p = model.predict_proba(X_va)
     # Align columns to the full label space if a class was absent in training
@@ -514,59 +526,81 @@ def train_sklearn_model(factory, X_tr, y_tr, X_va, n_classes):
 # 4. METRICS
 # =============================================================================
 
-
-def compute_metrics(probs, y_true, y_macro_true, prog_to_macro_idx, n_classes, n_macro):
-    labels = np.arange(n_classes)
-    y_pred = probs.argmax(axis=1)
-
-    # Macro-track probabilities = sum of member-program probabilities
-    macro_probs = np.zeros((len(probs), n_macro))
-    for prog_idx, macro_idx in enumerate(prog_to_macro_idx):
-        macro_probs[:, macro_idx] += probs[:, prog_idx]
-    macro_pred = macro_probs.argmax(axis=1)
-
-    return {
-        "Macro-Track Top-1 Acc (%)": 100.0 * accuracy_score(y_macro_true, macro_pred),
-        "Granular Top-1 Acc (%)": 100.0 * accuracy_score(y_true, y_pred),
-        "Granular Top-3 Acc (%)": 100.0 * top_k_accuracy_score(y_true, probs, k=3, labels=labels),
-        "Granular Macro-F1": f1_score(y_true, y_pred, average="macro", labels=labels,
-                                      zero_division=0),
-    }
-
-
-METRIC_COLS = ["Macro-Track Top-1 Acc (%)", "Granular Top-1 Acc (%)",
+METRIC_COLS = ["Macro-Track Top-1 Acc (%)", "Macro-Track Macro-F1", "Granular Top-1 Acc (%)",
                "Granular Top-3 Acc (%)", "Granular Macro-F1"]
 
+
+def compute_metrics(probs, y_true, y_macro_true, label_to_macro_idx, n_macro, granular):
+    """`probs` are over the training labels. When the labels are majors (granular=True),
+    macro-track probabilities are the sum of each track's member probabilities. When the
+    labels are the tracks themselves, the granular metrics are not defined (NaN)."""
+    n_labels = probs.shape[1]
+    y_pred = probs.argmax(axis=1)
+
+    macro_probs = np.zeros((len(probs), n_macro))
+    for label_idx, macro_idx in enumerate(label_to_macro_idx):
+        macro_probs[:, macro_idx] += probs[:, label_idx]
+    macro_pred = macro_probs.argmax(axis=1)
+
+    m = {
+        "Macro-Track Top-1 Acc (%)": 100.0 * accuracy_score(y_macro_true, macro_pred),
+        "Macro-Track Macro-F1": f1_score(y_macro_true, macro_pred, average="macro",
+                                         labels=np.arange(n_macro), zero_division=0),
+        "Granular Top-1 Acc (%)": np.nan,
+        "Granular Top-3 Acc (%)": np.nan,
+        "Granular Macro-F1": np.nan,
+    }
+    if granular:
+        labels = np.arange(n_labels)
+        m["Granular Top-1 Acc (%)"] = 100.0 * accuracy_score(y_true, y_pred)
+        m["Granular Top-3 Acc (%)"] = 100.0 * top_k_accuracy_score(y_true, probs, k=3,
+                                                                   labels=labels)
+        m["Granular Macro-F1"] = f1_score(y_true, y_pred, average="macro", labels=labels,
+                                          zero_division=0)
+    return m
+
+
 # =============================================================================
-# 5. MAIN EXPERIMENT
+# 5. EXPERIMENT RUNNER
 # =============================================================================
 
 
-def main():
+def run_experiment(df, label_col=TARGET, label_to_track=None, weighted=True,
+                   temporal_features=TEMPORAL_FEATURES, time_steps=TIME_STEPS,
+                   summary_csv=SUMMARY_CSV, fold_csv=FOLD_CSV, title="OBJECTIVE 1"):
+    """Stratified 5-fold CV of every model in MODEL_REGISTRY.
+
+    label_col       : column the models are trained on (majors, grouped majors or tracks).
+    label_to_track  : dict label -> macro-track; defaults to PROGRAM_TO_TRACK, or the
+                      identity when training directly on MACRO_TRACK.
+    weighted        : inverse-frequency class weights (torch) / class_weight='balanced'.
+    """
     t0 = time.time()
-    print(f"[Setup] Device: {DEVICE} | torch {torch.__version__}")
-    df = load_and_prepare(DATA_PATH)
+    assert len(temporal_features) % time_steps == 0
+    granular = label_col != MACRO_TARGET
+    if label_to_track is None:
+        label_to_track = PROGRAM_TO_TRACK if granular else {m: m for m in df[MACRO_TARGET].unique()}
+    primary = "Granular Macro-F1" if granular else "Macro-Track Macro-F1"
 
-    programs = sorted(df[TARGET].unique())
+    labels = sorted(df[label_col].unique())
     macros = sorted(df[MACRO_TARGET].unique())
-    prog_idx = {p: i for i, p in enumerate(programs)}
+    label_idx = {p: i for i, p in enumerate(labels)}
     macro_idx = {m: i for i, m in enumerate(macros)}
-    prog_to_macro_idx = np.array([macro_idx[PROGRAM_TO_TRACK[p]] for p in programs])
-    n_classes, n_macro = len(programs), len(macros)
+    label_to_macro_idx = np.array([macro_idx[label_to_track[p]] for p in labels])
+    n_classes, n_macro = len(labels), len(macros)
 
-    y = df[TARGET].map(prog_idx).values.astype(np.int64)
+    y = df[label_col].map(label_idx).values.astype(np.int64)
     y_macro = df[MACRO_TARGET].map(macro_idx).values.astype(np.int64)
 
+    print(f"\n{'#' * 120}\n{title}\n{'#' * 120}")
+    print(f"[Setup] labels={label_col} ({n_classes} classes) | weighted={weighted} | "
+          f"temporal=(B, {time_steps}, {len(temporal_features) // time_steps}) {temporal_features}")
     min_count = np.bincount(y).min()
     if min_count < N_SPLITS:
-        print(f"[CV] WARNING - smallest program has {min_count} samples (< {N_SPLITS} folds); "
+        print(f"[CV] WARNING - smallest class has {min_count} samples (< {N_SPLITS} folds); "
               "it will be missing from some validation folds.")
 
     continuous, nominal = split_static_types(df)
-    print(f"[Features] Static continuous: {continuous}")
-    print(f"[Features] Static nominal (one-hot): {nominal}")
-    print(f"[Features] Temporal sequence: (B, {TIME_STEPS}, {FEATS_PER_STEP})")
-
     skf = StratifiedKFold(n_splits=N_SPLITS, shuffle=True, random_state=SEED)
     records = []
 
@@ -577,74 +611,92 @@ def main():
         ym_va = y_macro[va_idx]
 
         Xs_tr, Xs_va, Xseq_tr, Xseq_va, Xflat_tr, Xflat_va = preprocess_fold(
-            df_tr, df_va, continuous, nominal)
-        class_w = inverse_class_weights(y_tr, n_classes)
+            df_tr, df_va, continuous, nominal, temporal_features, time_steps)
+        if weighted:
+            class_w = inverse_class_weights(y_tr, n_classes)
+        else:
+            class_w = (np.bincount(y_tr, minlength=n_classes) > 0).astype(np.float32)
 
         for name, (category, kind, factory) in MODEL_REGISTRY.items():
             ts = time.time()
             if kind == "sklearn":
-                probs = train_sklearn_model(factory, Xflat_tr, y_tr, Xflat_va, n_classes)
+                probs = train_sklearn_model(factory, Xflat_tr, y_tr, Xflat_va, n_classes,
+                                            "balanced" if weighted else None)
             else:
                 probs = train_torch_model(factory, Xs_tr, Xseq_tr, y_tr, Xs_va, Xseq_va,
                                           n_classes, class_w, seed=SEED + fold)
-            m = compute_metrics(probs, y_va, ym_va, prog_to_macro_idx, n_classes, n_macro)
+            m = compute_metrics(probs, y_va, ym_va, label_to_macro_idx, n_macro, granular)
             records.append({"Fold": fold, "Model": name, "Category": category, **m})
-            print(f"  {name:<36s} | Track {m['Macro-Track Top-1 Acc (%)']:6.2f}% | "
-                  f"Top1 {m['Granular Top-1 Acc (%)']:6.2f}% | "
-                  f"Top3 {m['Granular Top-3 Acc (%)']:6.2f}% | "
-                  f"F1 {m['Granular Macro-F1']:.4f} | {time.time() - ts:5.1f}s")
+            line = (f"  {name:<36s} | Track {m['Macro-Track Top-1 Acc (%)']:6.2f}% "
+                    f"F1 {m['Macro-Track Macro-F1']:.4f}")
+            if granular:
+                line += (f" | Top1 {m['Granular Top-1 Acc (%)']:6.2f}% | "
+                         f"Top3 {m['Granular Top-3 Acc (%)']:6.2f}% | "
+                         f"F1 {m['Granular Macro-F1']:.4f}")
+            print(f"{line} | {time.time() - ts:5.1f}s")
 
     fold_df = pd.DataFrame(records)
-    fold_df.to_csv(FOLD_CSV, index=False)
+    fold_df.to_csv(fold_csv, index=False)
 
-    # ---- Statistical significance: paired t-test on fold-wise Macro-F1 ------
-    f1_wide = fold_df.pivot(index="Fold", columns="Model", values="Granular Macro-F1")
-    proposed_f1 = f1_wide[PROPOSED].values
+    # ---- Statistical significance: paired t-test on the primary metric ------
+    wide = fold_df.pivot(index="Fold", columns="Model", values=primary)
+    proposed_scores = wide[PROPOSED].values
+    p_col = f"p-value vs Proposed ({primary})"
+    metric_cols = METRIC_COLS if granular else METRIC_COLS[:2]
 
     rows = []
     for name, (category, _, _) in MODEL_REGISTRY.items():
         sub = fold_df[fold_df["Model"] == name]
         row = {"Category": category, "Model": name}
-        for col in METRIC_COLS:
+        for col in metric_cols:
             mu, sd = sub[col].mean(), sub[col].std(ddof=1)
             row[col] = f"{mu:.4f} ± {sd:.4f}" if "F1" in col else f"{mu:.2f} ± {sd:.2f}"
             row[col + " [mean]"] = mu
         if name == PROPOSED:
-            row["p-value vs Proposed (Macro-F1)"] = "—"
+            row[p_col] = "—"
         else:
-            other = f1_wide[name].values
-            if np.allclose(proposed_f1 - other, 0):
+            other = wide[name].values
+            if np.allclose(proposed_scores - other, 0):
                 p = 1.0
             else:
-                _, p = stats.ttest_rel(proposed_f1, other)
+                _, p = stats.ttest_rel(proposed_scores, other)
             sig = "***" if p < 0.001 else "**" if p < 0.01 else "*" if p < 0.05 else "n.s."
-            row["p-value vs Proposed (Macro-F1)"] = f"{p:.4g} ({sig})"
+            row[p_col] = f"{p:.4g} ({sig})"
         rows.append(row)
 
     summary = pd.DataFrame(rows)
-    export_cols = ["Category", "Model"] + METRIC_COLS + ["p-value vs Proposed (Macro-F1)"]
-    summary[export_cols].to_csv(SUMMARY_CSV, index=False, encoding="utf-8-sig")
+    export_cols = ["Category", "Model"] + metric_cols + [p_col]
+    summary[export_cols].to_csv(summary_csv, index=False, encoding="utf-8-sig")
 
     # ---- Display ----------------------------------------------------------
     pd.set_option("display.width", 250)
     pd.set_option("display.max_columns", 20)
     pd.set_option("display.max_colwidth", 40)
-    print(f"\n{'=' * 120}\nOBJECTIVE 1 - SUMMARY ({N_SPLITS}-fold stratified CV, Mean ± Std)\n{'=' * 120}")
+    print(f"\n{'=' * 120}\n{title} - SUMMARY ({N_SPLITS}-fold stratified CV, Mean ± Std)\n{'=' * 120}")
     print(summary[export_cols].to_string(index=False))
-    print("\nSignificance: paired t-test (scipy.stats.ttest_rel) on fold-wise Macro-F1, "
+    print(f"\nSignificance: paired t-test (scipy.stats.ttest_rel) on fold-wise {primary}, "
           f"df={N_SPLITS - 1}. * p<0.05, ** p<0.01, *** p<0.001, n.s. not significant.")
 
-    best = summary.sort_values("Granular Macro-F1 [mean]", ascending=False).iloc[0]
+    best = summary[summary["Model"] != REFERENCE].sort_values(
+        primary + " [mean]", ascending=False).iloc[0]
     prop = summary[summary["Model"] == PROPOSED].iloc[0]
-    print(f"\nBest Macro-F1 model: {best['Model']} ({best['Granular Macro-F1']})")
-    print(f"Proposed model targets: Macro-Track Top-1 > 80% -> "
-          f"{prop['Macro-Track Top-1 Acc (%) [mean]']:.2f}% "
-          f"({'MET' if prop['Macro-Track Top-1 Acc (%) [mean]'] > 80 else 'NOT MET'}); "
-          f"Granular Top-3 > 85% -> {prop['Granular Top-3 Acc (%) [mean]']:.2f}% "
-          f"({'MET' if prop['Granular Top-3 Acc (%) [mean]'] > 85 else 'NOT MET'})")
-    print(f"\nSaved: {SUMMARY_CSV} (summary), {FOLD_CSV} (fold-wise raw metrics)")
-    print(f"Total runtime: {(time.time() - t0) / 60:.1f} min")
+    print(f"\nBest {primary} model: {best['Model']} ({best[primary]})")
+    track = prop["Macro-Track Top-1 Acc (%) [mean]"]
+    msg = f"Proposed model targets: Macro-Track Top-1 > 80% -> {track:.2f}% " \
+          f"({'MET' if track > 80 else 'NOT MET'})"
+    if granular:
+        top3 = prop["Granular Top-3 Acc (%) [mean]"]
+        msg += f"; Granular Top-3 > 85% -> {top3:.2f}% ({'MET' if top3 > 85 else 'NOT MET'})"
+    print(msg)
+    print(f"\nSaved: {summary_csv} (summary), {fold_csv} (fold-wise raw metrics)")
+    print(f"Runtime: {(time.time() - t0) / 60:.1f} min")
     return summary, fold_df
+
+
+def main():
+    print(f"[Setup] Device: {DEVICE} | torch {torch.__version__}")
+    df = load_and_prepare(DATA_PATH)
+    return run_experiment(df)
 
 
 if __name__ == "__main__":
