@@ -1,0 +1,12 @@
+﻿Category,Model,Macro-Track Top-1 Acc (%),Macro-Track Macro-F1,Granular Top-1 Acc (%),Granular Top-3 Acc (%),Granular Macro-F1,p-value vs Proposed (Granular Macro-F1)
+0: Reference,Majority Class (reference),43.57 ± 0.02,0.1517 ± 0.0000,42.85 ± 0.02,78.74 ± 0.02,0.0375 ± 0.0000,0.0003008 (***)
+A: Traditional ML,Logistic Regression,29.58 ± 0.75,0.2488 ± 0.0053,10.21 ± 0.37,40.71 ± 1.20,0.0602 ± 0.0033,0.144 (n.s.)
+A: Traditional ML,Random Forest,32.32 ± 0.86,0.2645 ± 0.0056,30.12 ± 1.18,72.40 ± 0.59,0.0855 ± 0.0029,0.003332 (**)
+A: Traditional ML,HistGradientBoosting,36.94 ± 0.82,0.3296 ± 0.0099,32.08 ± 0.87,75.18 ± 0.88,0.0884 ± 0.0080,0.008856 (**)
+B: Single-Branch Deep,Static MLP Only,26.66 ± 1.06,0.2051 ± 0.0143,7.64 ± 1.86,40.52 ± 5.40,0.0465 ± 0.0076,0.01317 (*)
+B: Single-Branch Deep,Standalone LSTM,20.80 ± 0.48,0.1020 ± 0.0112,3.84 ± 1.35,24.58 ± 3.98,0.0230 ± 0.0055,3.792e-06 (***)
+C: Hybrid Baseline,Hybrid 1: MLP + CNN + LSTM,28.81 ± 0.95,0.2317 ± 0.0065,13.32 ± 1.89,47.01 ± 3.90,0.0661 ± 0.0054,1 (n.s.)
+C: Hybrid Baseline,Hybrid 2: MLP + BiLSTM,28.84 ± 1.23,0.2281 ± 0.0120,12.89 ± 1.50,46.87 ± 3.49,0.0628 ± 0.0062,0.5024 (n.s.)
+C: Hybrid Baseline,Hybrid 3: MLP + GRU,29.41 ± 1.17,0.2405 ± 0.0186,13.92 ± 2.13,48.13 ± 3.56,0.0635 ± 0.0063,0.4455 (n.s.)
+C: Hybrid Baseline,Hybrid 4: MLP + Transformer,28.12 ± 1.56,0.2276 ± 0.0141,12.97 ± 1.17,46.82 ± 2.93,0.0653 ± 0.0046,0.8712 (n.s.)
+D: Proposed,Proposed: MLP + Causal TCN + LSTM,28.35 ± 1.08,0.2287 ± 0.0147,13.70 ± 1.89,46.95 ± 3.71,0.0661 ± 0.0054,—

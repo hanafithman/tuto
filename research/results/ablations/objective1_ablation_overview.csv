@@ -1,0 +1,56 @@
+﻿Experiment,Model,Macro-Track Top-1 Acc (%),Macro-Track Macro-F1,Granular Top-1 Acc (%),Granular Top-3 Acc (%),Granular Macro-F1
+"E0 BASELINE (21 majors, weighted, all features)",Majority Class (reference),43.5662,0.1517,42.8491,78.7447,0.0286
+"E0 BASELINE (21 majors, weighted, all features)",Logistic Regression,29.2483,0.247,10.3134,40.2788,0.0487
+"E0 BASELINE (21 majors, weighted, all features)",Random Forest,28.7487,0.2264,29.7557,70.6872,0.0669
+"E0 BASELINE (21 majors, weighted, all features)",HistGradientBoosting,36.9188,0.3329,31.7299,75.1995,0.0652
+"E0 BASELINE (21 majors, weighted, all features)",Static MLP Only,26.4282,0.1953,6.3492,35.7907,0.0334
+"E0 BASELINE (21 majors, weighted, all features)",Standalone LSTM,20.3771,0.0877,2.6347,21.271,0.0145
+"E0 BASELINE (21 majors, weighted, all features)",Hybrid 1: MLP + CNN + LSTM,27.6771,0.2121,11.9086,44.7584,0.0475
+"E0 BASELINE (21 majors, weighted, all features)",Hybrid 2: MLP + BiLSTM,27.8139,0.2097,11.6186,43.8561,0.0485
+"E0 BASELINE (21 majors, weighted, all features)",Hybrid 3: MLP + GRU,28.0961,0.2172,11.8362,43.7836,0.0504
+"E0 BASELINE (21 majors, weighted, all features)",Hybrid 4: MLP + Transformer,27.9511,0.217,12.9319,44.3314,0.0507
+"E0 BASELINE (21 majors, weighted, all features)",Proposed: MLP + Causal TCN + LSTM,28.3619,0.217,12.1424,43.9288,0.0483
+E1 DIRECT MACRO-TRACK (4 classes),Majority Class (reference),43.5662,0.1517,,,
+E1 DIRECT MACRO-TRACK (4 classes),Logistic Regression,36.7899,0.3471,,,
+E1 DIRECT MACRO-TRACK (4 classes),Random Forest,40.6173,0.3399,,,
+E1 DIRECT MACRO-TRACK (4 classes),HistGradientBoosting,38.764,0.3505,,,
+E1 DIRECT MACRO-TRACK (4 classes),Static MLP Only,31.9877,0.2974,,,
+E1 DIRECT MACRO-TRACK (4 classes),Standalone LSTM,31.8752,0.2868,,,
+E1 DIRECT MACRO-TRACK (4 classes),Hybrid 1: MLP + CNN + LSTM,34.1068,0.3229,,,
+E1 DIRECT MACRO-TRACK (4 classes),Hybrid 2: MLP + BiLSTM,34.3888,0.3238,,,
+E1 DIRECT MACRO-TRACK (4 classes),Hybrid 3: MLP + GRU,34.6468,0.3261,,,
+E1 DIRECT MACRO-TRACK (4 classes),Hybrid 4: MLP + Transformer,33.704,0.3174,,,
+E1 DIRECT MACRO-TRACK (4 classes),Proposed: MLP + Causal TCN + LSTM,34.9126,0.3277,,,
+E2 NO CLASS WEIGHTS,Majority Class (reference),43.5662,0.1517,42.8491,78.7447,0.0286
+E2 NO CLASS WEIGHTS,Logistic Regression,45.5402,0.3143,43.1633,81.4841,0.0526
+E2 NO CLASS WEIGHTS,Random Forest,44.7426,0.2874,42.5671,81.0168,0.0452
+E2 NO CLASS WEIGHTS,HistGradientBoosting,36.7576,0.2898,29.9573,60.4462,0.0601
+E2 NO CLASS WEIGHTS,Static MLP Only,42.833,0.2728,42.7846,81.2908,0.0433
+E2 NO CLASS WEIGHTS,Standalone LSTM,44.0738,0.191,42.8652,79.9614,0.0292
+E2 NO CLASS WEIGHTS,Hybrid 1: MLP + CNN + LSTM,44.7989,0.3007,43.0102,81.1619,0.0489
+E2 NO CLASS WEIGHTS,Hybrid 2: MLP + BiLSTM,44.5814,0.2959,43.0344,81.1136,0.0498
+E2 NO CLASS WEIGHTS,Hybrid 3: MLP + GRU,44.8231,0.2955,42.9377,81.3311,0.0493
+E2 NO CLASS WEIGHTS,Hybrid 4: MLP + Transformer,43.8885,0.2907,42.4704,81.1538,0.0475
+E2 NO CLASS WEIGHTS,Proposed: MLP + Causal TCN + LSTM,44.5733,0.3004,42.8088,81.4681,0.0503
+E3 RARE MAJORS GROUPED (< 30 -> OTHER per track),Majority Class (reference),43.5662,0.1517,42.8491,78.7447,0.0375
+E3 RARE MAJORS GROUPED (< 30 -> OTHER per track),Logistic Regression,29.5786,0.2488,10.2087,40.7059,0.0602
+E3 RARE MAJORS GROUPED (< 30 -> OTHER per track),Random Forest,32.318,0.2645,30.1184,72.4036,0.0855
+E3 RARE MAJORS GROUPED (< 30 -> OTHER per track),HistGradientBoosting,36.943,0.3296,32.0844,75.1753,0.0884
+E3 RARE MAJORS GROUPED (< 30 -> OTHER per track),Static MLP Only,26.6618,0.2051,7.6382,40.52,0.0465
+E3 RARE MAJORS GROUPED (< 30 -> OTHER per track),Standalone LSTM,20.8041,0.102,3.8354,24.5835,0.023
+E3 RARE MAJORS GROUPED (< 30 -> OTHER per track),Hybrid 1: MLP + CNN + LSTM,28.8131,0.2317,13.3187,47.0062,0.0661
+E3 RARE MAJORS GROUPED (< 30 -> OTHER per track),Hybrid 2: MLP + BiLSTM,28.8373,0.2281,12.8917,46.8694,0.0628
+E3 RARE MAJORS GROUPED (< 30 -> OTHER per track),Hybrid 3: MLP + GRU,29.4093,0.2405,13.923,48.1344,0.0635
+E3 RARE MAJORS GROUPED (< 30 -> OTHER per track),Hybrid 4: MLP + Transformer,28.1202,0.2276,12.9722,46.8211,0.0653
+E3 RARE MAJORS GROUPED (< 30 -> OTHER per track),Proposed: MLP + Causal TCN + LSTM,28.3458,0.2287,13.6976,46.9502,0.0661
+"E4 NO SABER PRO FEATURES (8 temporal features, 2 steps)",Majority Class (reference),43.5662,0.1517,42.8491,78.7447,0.0286
+"E4 NO SABER PRO FEATURES (8 temporal features, 2 steps)",Logistic Regression,29.0549,0.2456,9.3465,39.4489,0.0456
+"E4 NO SABER PRO FEATURES (8 temporal features, 2 steps)",Random Forest,29.8284,0.2378,29.8686,70.0991,0.0659
+"E4 NO SABER PRO FEATURES (8 temporal features, 2 steps)",HistGradientBoosting,36.951,0.33,31.1497,74.434,0.0641
+"E4 NO SABER PRO FEATURES (8 temporal features, 2 steps)",Static MLP Only,26.4282,0.1953,6.3492,35.7907,0.0334
+"E4 NO SABER PRO FEATURES (8 temporal features, 2 steps)",Standalone LSTM,20.4093,0.0883,2.264,20.7876,0.0162
+"E4 NO SABER PRO FEATURES (8 temporal features, 2 steps)",Hybrid 1: MLP + CNN + LSTM,27.5965,0.2145,12.1665,45.3466,0.0497
+"E4 NO SABER PRO FEATURES (8 temporal features, 2 steps)",Hybrid 2: MLP + BiLSTM,27.9429,0.2104,11.6589,43.5097,0.047
+"E4 NO SABER PRO FEATURES (8 temporal features, 2 steps)",Hybrid 3: MLP + GRU,27.5643,0.2126,11.691,44.6133,0.0492
+"E4 NO SABER PRO FEATURES (8 temporal features, 2 steps)",Hybrid 4: MLP + Transformer,28.1283,0.2201,10.676,42.6557,0.0454
+"E4 NO SABER PRO FEATURES (8 temporal features, 2 steps)",Proposed: MLP + Causal TCN + LSTM,27.3628,0.2062,11.4655,42.6554,0.0464

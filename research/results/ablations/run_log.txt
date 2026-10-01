@@ -1,0 +1,620 @@
+[Setup] Device: cpu | torch 2.14.1+cu130
+[Data] Loaded 12,411 rows x 45 columns.
+[Data] 12,411 rows after filtering | 21 programs | 4 macro-tracks
+[Data] Macro-track distribution:
+MACRO_TRACK
+Industrial & Management          5407
+Civil & Infrastructure           3481
+Mechanical, Electrical & Tech    2522
+Chemical & Process               1001
+
+[E3] Majors regrouped (< 30 students):
+                                                n                          grouped_label
+PRODUCTIVITY AND QUALITY ENGINEERING           29        OTHER - Industrial & Management
+TRANSPORTATION AND ROAD ENGINEERING            27         OTHER - Civil & Infrastructure
+INDUSTRIAL AUTOMATIC ENGINEERING               22  OTHER - Mechanical, Electrical & Tech
+CONTROL ENGINEERING                            20  OTHER - Mechanical, Electrical & Tech
+CIVIL CONSTRUCTIONS                            14         OTHER - Civil & Infrastructure
+AUTOMATION ENGINEERING                         10  OTHER - Mechanical, Electrical & Tech
+INDUSTRIAL CONTROL AND AUTOMATION ENGINEERING   1  OTHER - Mechanical, Electrical & Tech
+TEXTILE ENGINEERING                             1                   CHEMICAL ENGINEERING
+[E3] 16 classes after grouping
+
+########################################################################################################################
+E0 BASELINE (21 majors, weighted, all features)
+########################################################################################################################
+[Setup] labels=ACADEMIC_PROGRAM (21 classes) | weighted=True | temporal=(B, 3, 4) ['MAT_S11', 'CR_S11', 'CC_S11', 'BIO_S11', 'ENG_S11', 'G_SC', 'PERCENTILE', '2ND_DECILE', 'QUARTILE', 'STEM_AVG', 'HUM_AVG', 'STEM_HUM_RATIO']
+[CV] WARNING - smallest class has 1 samples (< 5 folds); it will be missing from some validation folds.
+
+==============================================================================
+FOLD 1/5  (train=9,928, val=2,483)
+==============================================================================
+  Majority Class (reference)           | Track  43.58% F1 0.1518 | Top1  42.85% | Top3  78.74% | F1 0.0286 |   0.0s
+  Logistic Regression                  | Track  28.51% F1 0.2361 | Top1  10.71% | Top3  40.31% | F1 0.0515 |   9.5s
+  Random Forest                        | Track  29.00% F1 0.2274 | Top1  31.21% | Top3  72.33% | F1 0.0784 |   0.7s
+  HistGradientBoosting                 | Track  37.29% F1 0.3343 | Top1  31.41% | Top3  74.35% | F1 0.0630 |  14.2s
+  Static MLP Only                      | Track  26.50% F1 0.2100 | Top1   6.52% | Top3  37.25% | F1 0.0351 |   6.9s
+  Standalone LSTM                      | Track  20.46% F1 0.0923 | Top1   3.83% | Top3  26.78% | F1 0.0186 |   5.2s
+  Hybrid 1: MLP + CNN + LSTM           | Track  27.63% F1 0.2145 | Top1  14.18% | Top3  48.21% | F1 0.0511 |   9.7s
+  Hybrid 2: MLP + BiLSTM               | Track  29.48% F1 0.2390 | Top1  13.49% | Top3  45.75% | F1 0.0469 |   9.6s
+  Hybrid 3: MLP + GRU                  | Track  27.75% F1 0.2159 | Top1  12.73% | Top3  45.55% | F1 0.0563 |   8.6s
+  Hybrid 4: MLP + Transformer          | Track  27.27% F1 0.2218 | Top1  14.58% | Top3  47.52% | F1 0.0547 |  10.7s
+  Proposed: MLP + Causal TCN + LSTM    | Track  28.27% F1 0.2171 | Top1  12.73% | Top3  43.70% | F1 0.0529 |  11.2s
+
+==============================================================================
+FOLD 2/5  (train=9,929, val=2,482)
+==============================================================================
+  Majority Class (reference)           | Track  43.59% F1 0.1518 | Top1  42.87% | Top3  78.77% | F1 0.0286 |   0.0s
+  Logistic Regression                  | Track  30.26% F1 0.2625 | Top1  10.03% | Top3  40.85% | F1 0.0484 |  11.3s
+  Random Forest                        | Track  28.89% F1 0.2296 | Top1  31.31% | Top3  70.95% | F1 0.0689 |   0.7s
+  HistGradientBoosting                 | Track  37.91% F1 0.3395 | Top1  32.59% | Top3  75.83% | F1 0.0702 |  14.9s
+  Static MLP Only                      | Track  26.03% F1 0.1762 | Top1   6.53% | Top3  35.74% | F1 0.0312 |   5.5s
+  Standalone LSTM                      | Track  20.47% F1 0.0908 | Top1   2.42% | Top3  23.13% | F1 0.0120 |   5.5s
+  Hybrid 1: MLP + CNN + LSTM           | Track  28.97% F1 0.2121 | Top1  13.09% | Top3  47.10% | F1 0.0537 |   9.2s
+  Hybrid 2: MLP + BiLSTM               | Track  29.53% F1 0.2112 | Top1  12.77% | Top3  45.21% | F1 0.0568 |   9.2s
+  Hybrid 3: MLP + GRU                  | Track  28.65% F1 0.2037 | Top1  12.57% | Top3  43.80% | F1 0.0560 |   8.8s
+  Hybrid 4: MLP + Transformer          | Track  27.44% F1 0.1979 | Top1  15.87% | Top3  48.71% | F1 0.0588 |  11.5s
+  Proposed: MLP + Causal TCN + LSTM    | Track  28.73% F1 0.2087 | Top1  13.30% | Top3  46.94% | F1 0.0462 |  10.9s
+
+==============================================================================
+FOLD 3/5  (train=9,929, val=2,482)
+==============================================================================
+  Majority Class (reference)           | Track  43.55% F1 0.1517 | Top1  42.87% | Top3  78.77% | F1 0.0286 |   0.0s
+  Logistic Regression                  | Track  30.22% F1 0.2490 | Top1  10.64% | Top3  40.89% | F1 0.0505 |  10.8s
+  Random Forest                        | Track  28.53% F1 0.2193 | Top1  28.57% | Top3  70.83% | F1 0.0586 |   0.7s
+  HistGradientBoosting                 | Track  37.31% F1 0.3402 | Top1  32.47% | Top3  74.98% | F1 0.0635 |  15.3s
+  Static MLP Only                      | Track  25.26% F1 0.1765 | Top1   5.84% | Top3  34.49% | F1 0.0342 |   5.0s
+  Standalone LSTM                      | Track  20.31% F1 0.0844 | Top1   2.86% | Top3  23.37% | F1 0.0177 |   5.4s
+  Hybrid 1: MLP + CNN + LSTM           | Track  26.27% F1 0.2044 | Top1  10.31% | Top3  46.01% | F1 0.0433 |   9.4s
+  Hybrid 2: MLP + BiLSTM               | Track  25.87% F1 0.1836 | Top1   9.83% | Top3  43.55% | F1 0.0400 |   9.1s
+  Hybrid 3: MLP + GRU                  | Track  28.61% F1 0.2200 | Top1  10.52% | Top3  44.52% | F1 0.0425 |   8.4s
+  Hybrid 4: MLP + Transformer          | Track  29.09% F1 0.2220 | Top1  11.32% | Top3  44.68% | F1 0.0471 |  10.2s
+  Proposed: MLP + Causal TCN + LSTM    | Track  28.81% F1 0.2203 | Top1  10.64% | Top3  43.07% | F1 0.0469 |  11.7s
+
+==============================================================================
+FOLD 4/5  (train=9,929, val=2,482)
+==============================================================================
+  Majority Class (reference)           | Track  43.55% F1 0.1517 | Top1  42.83% | Top3  78.73% | F1 0.0286 |   0.0s
+  Logistic Regression                  | Track  28.49% F1 0.2448 | Top1  11.00% | Top3  41.94% | F1 0.0461 |   8.9s
+  Random Forest                        | Track  27.72% F1 0.2192 | Top1  28.24% | Top3  71.03% | F1 0.0652 |   0.6s
+  HistGradientBoosting                 | Track  36.50% F1 0.3303 | Top1  31.18% | Top3  75.66% | F1 0.0647 |  14.8s
+  Static MLP Only                      | Track  28.08% F1 0.2238 | Top1   5.56% | Top3  36.54% | F1 0.0289 |   5.6s
+  Standalone LSTM                      | Track  20.35% F1 0.0845 | Top1   1.09% | Top3   9.51% | F1 0.0082 |   5.4s
+  Hybrid 1: MLP + CNN + LSTM           | Track  28.69% F1 0.2295 | Top1  10.39% | Top3  40.37% | F1 0.0419 |   9.4s
+  Hybrid 2: MLP + BiLSTM               | Track  26.59% F1 0.2078 | Top1   9.95% | Top3  39.52% | F1 0.0462 |   9.4s
+  Hybrid 3: MLP + GRU                  | Track  27.92% F1 0.2381 | Top1  11.89% | Top3  44.56% | F1 0.0484 |   9.6s
+  Hybrid 4: MLP + Transformer          | Track  27.92% F1 0.2330 | Top1  11.16% | Top3  41.42% | F1 0.0460 |  11.0s
+  Proposed: MLP + Causal TCN + LSTM    | Track  28.69% F1 0.2346 | Top1  11.68% | Top3  43.51% | F1 0.0468 |  10.6s
+
+==============================================================================
+FOLD 5/5  (train=9,929, val=2,482)
+==============================================================================
+  Majority Class (reference)           | Track  43.55% F1 0.1517 | Top1  42.83% | Top3  78.73% | F1 0.0286 |   0.0s
+  Logistic Regression                  | Track  28.77% F1 0.2427 | Top1   9.19% | Top3  37.39% | F1 0.0468 |   6.7s
+  Random Forest                        | Track  29.61% F1 0.2366 | Top1  29.45% | Top3  68.29% | F1 0.0635 |   0.7s
+  HistGradientBoosting                 | Track  35.58% F1 0.3204 | Top1  30.98% | Top3  75.18% | F1 0.0645 |  14.4s
+  Static MLP Only                      | Track  26.27% F1 0.1901 | Top1   7.29% | Top3  34.93% | F1 0.0376 |   5.2s
+  Standalone LSTM                      | Track  20.31% F1 0.0864 | Top1   2.98% | Top3  23.57% | F1 0.0160 |   5.6s
+  Hybrid 1: MLP + CNN + LSTM           | Track  26.83% F1 0.2001 | Top1  11.56% | Top3  42.10% | F1 0.0472 |   9.7s
+  Hybrid 2: MLP + BiLSTM               | Track  27.60% F1 0.2067 | Top1  12.05% | Top3  45.25% | F1 0.0527 |   9.1s
+  Hybrid 3: MLP + GRU                  | Track  27.56% F1 0.2082 | Top1  11.48% | Top3  40.49% | F1 0.0489 |   9.0s
+  Hybrid 4: MLP + Transformer          | Track  28.04% F1 0.2101 | Top1  11.72% | Top3  39.32% | F1 0.0468 |  11.1s
+  Proposed: MLP + Causal TCN + LSTM    | Track  27.32% F1 0.2045 | Top1  12.37% | Top3  42.43% | F1 0.0485 |  10.8s
+
+========================================================================================================================
+E0 BASELINE (21 majors, weighted, all features) - SUMMARY (5-fold stratified CV, Mean ± Std)
+========================================================================================================================
+             Category                             Model Macro-Track Top-1 Acc (%) Macro-Track Macro-F1 Granular Top-1 Acc (%) Granular Top-3 Acc (%) Granular Macro-F1 p-value vs Proposed (Granular Macro-F1)
+         0: Reference        Majority Class (reference)              43.57 ± 0.02      0.1517 ± 0.0000           42.85 ± 0.02           78.74 ± 0.02   0.0286 ± 0.0000                         8.663e-05 (***)
+    A: Traditional ML               Logistic Regression              29.25 ± 0.91      0.2470 ± 0.0098           10.31 ± 0.72           40.28 ± 1.72   0.0487 ± 0.0023                            0.715 (n.s.)
+    A: Traditional ML                     Random Forest              28.75 ± 0.70      0.2264 ± 0.0073           29.76 ± 1.44           70.69 ± 1.47   0.0669 ± 0.0074                           0.001707 (**)
+    A: Traditional ML              HistGradientBoosting              36.92 ± 0.90      0.3329 ± 0.0081           31.73 ± 0.75           75.20 ± 0.59   0.0652 ± 0.0029                           0.001583 (**)
+B: Single-Branch Deep                   Static MLP Only              26.43 ± 1.04      0.1953 ± 0.0211            6.35 ± 0.68           35.79 ± 1.13   0.0334 ± 0.0034                         0.0004314 (***)
+B: Single-Branch Deep                   Standalone LSTM              20.38 ± 0.08      0.0877 ± 0.0037            2.63 ± 1.00           21.27 ± 6.74   0.0145 ± 0.0043                         2.396e-05 (***)
+   C: Hybrid Baseline        Hybrid 1: MLP + CNN + LSTM              27.68 ± 1.16      0.2121 ± 0.0113           11.91 ± 1.70           44.76 ± 3.36   0.0475 ± 0.0050                           0.7338 (n.s.)
+   C: Hybrid Baseline            Hybrid 2: MLP + BiLSTM              27.81 ± 1.66      0.2097 ± 0.0197           11.62 ± 1.66           43.86 ± 2.56   0.0485 ± 0.0065                           0.9401 (n.s.)
+   C: Hybrid Baseline               Hybrid 3: MLP + GRU              28.10 ± 0.50      0.2172 ± 0.0133           11.84 ± 0.89           43.78 ± 1.94   0.0504 ± 0.0058                           0.4033 (n.s.)
+   C: Hybrid Baseline       Hybrid 4: MLP + Transformer              27.95 ± 0.71      0.2170 ± 0.0134           12.93 ± 2.15           44.33 ± 3.97   0.0507 ± 0.0058                           0.4054 (n.s.)
+          D: Proposed Proposed: MLP + Causal TCN + LSTM              28.36 ± 0.62      0.2170 ± 0.0117           12.14 ± 1.02           43.93 ± 1.75   0.0483 ± 0.0027                                       —
+
+Significance: paired t-test (scipy.stats.ttest_rel) on fold-wise Granular Macro-F1, df=4. * p<0.05, ** p<0.01, *** p<0.001, n.s. not significant.
+
+Best Granular Macro-F1 model: Random Forest (0.0669 ± 0.0074)
+Proposed model targets: Macro-Track Top-1 > 80% -> 28.36% (NOT MET); Granular Top-3 > 85% -> 43.93% (NOT MET)
+
+Saved: objective1_E0_results.csv (summary), objective1_E0_folds.csv (fold-wise raw metrics)
+Runtime: 7.1 min
+
+########################################################################################################################
+E1 DIRECT MACRO-TRACK (4 classes)
+########################################################################################################################
+[Setup] labels=MACRO_TRACK (4 classes) | weighted=True | temporal=(B, 3, 4) ['MAT_S11', 'CR_S11', 'CC_S11', 'BIO_S11', 'ENG_S11', 'G_SC', 'PERCENTILE', '2ND_DECILE', 'QUARTILE', 'STEM_AVG', 'HUM_AVG', 'STEM_HUM_RATIO']
+
+==============================================================================
+FOLD 1/5  (train=9,928, val=2,483)
+==============================================================================
+  Majority Class (reference)           | Track  43.58% F1 0.1518 |   0.0s
+  Logistic Regression                  | Track  36.89% F1 0.3505 |   4.0s
+  Random Forest                        | Track  39.79% F1 0.3323 |   0.8s
+  HistGradientBoosting                 | Track  38.62% F1 0.3488 |   2.6s
+  Static MLP Only                      | Track  32.38% F1 0.2985 |   5.6s
+  Standalone LSTM                      | Track  29.28% F1 0.2677 |   5.7s
+  Hybrid 1: MLP + CNN + LSTM           | Track  34.64% F1 0.3238 |   9.8s
+  Hybrid 2: MLP + BiLSTM               | Track  34.68% F1 0.3200 |   9.2s
+  Hybrid 3: MLP + GRU                  | Track  33.47% F1 0.3141 |  10.0s
+  Hybrid 4: MLP + Transformer          | Track  32.74% F1 0.3081 |  11.7s
+  Proposed: MLP + Causal TCN + LSTM    | Track  35.08% F1 0.3269 |  11.8s
+
+==============================================================================
+FOLD 2/5  (train=9,929, val=2,482)
+==============================================================================
+  Majority Class (reference)           | Track  43.59% F1 0.1518 |   0.0s
+  Logistic Regression                  | Track  37.19% F1 0.3499 |   4.5s
+  Random Forest                        | Track  40.77% F1 0.3500 |   0.8s
+  HistGradientBoosting                 | Track  39.20% F1 0.3548 |   2.9s
+  Static MLP Only                      | Track  29.81% F1 0.2866 |   5.9s
+  Standalone LSTM                      | Track  33.24% F1 0.2898 |   6.3s
+  Hybrid 1: MLP + CNN + LSTM           | Track  32.15% F1 0.3094 |  10.5s
+  Hybrid 2: MLP + BiLSTM               | Track  32.63% F1 0.3140 |  10.0s
+  Hybrid 3: MLP + GRU                  | Track  32.88% F1 0.3152 |   9.7s
+  Hybrid 4: MLP + Transformer          | Track  31.10% F1 0.2979 |  11.2s
+  Proposed: MLP + Causal TCN + LSTM    | Track  32.76% F1 0.3143 |  11.8s
+
+==============================================================================
+FOLD 3/5  (train=9,929, val=2,482)
+==============================================================================
+  Majority Class (reference)           | Track  43.55% F1 0.1517 |   0.0s
+  Logistic Regression                  | Track  34.57% F1 0.3255 |   3.7s
+  Random Forest                        | Track  39.56% F1 0.3222 |   0.8s
+  HistGradientBoosting                 | Track  37.59% F1 0.3360 |   3.0s
+  Static MLP Only                      | Track  33.20% F1 0.2980 |   5.4s
+  Standalone LSTM                      | Track  32.35% F1 0.2874 |   6.7s
+  Hybrid 1: MLP + CNN + LSTM           | Track  34.85% F1 0.3237 |   9.5s
+  Hybrid 2: MLP + BiLSTM               | Track  35.54% F1 0.3257 |   9.1s
+  Hybrid 3: MLP + GRU                  | Track  36.06% F1 0.3359 |   8.9s
+  Hybrid 4: MLP + Transformer          | Track  35.41% F1 0.3233 |  11.2s
+  Proposed: MLP + Causal TCN + LSTM    | Track  36.26% F1 0.3256 |  11.6s
+
+==============================================================================
+FOLD 4/5  (train=9,929, val=2,482)
+==============================================================================
+  Majority Class (reference)           | Track  43.55% F1 0.1517 |   0.0s
+  Logistic Regression                  | Track  38.64% F1 0.3627 |   4.4s
+  Random Forest                        | Track  41.86% F1 0.3479 |   0.9s
+  HistGradientBoosting                 | Track  39.48% F1 0.3573 |   2.9s
+  Static MLP Only                      | Track  31.91% F1 0.2993 |   5.2s
+  Standalone LSTM                      | Track  30.54% F1 0.2806 |   5.6s
+  Hybrid 1: MLP + CNN + LSTM           | Track  33.48% F1 0.3194 |   9.8s
+  Hybrid 2: MLP + BiLSTM               | Track  34.29% F1 0.3265 |   9.6s
+  Hybrid 3: MLP + GRU                  | Track  34.93% F1 0.3305 |   9.8s
+  Hybrid 4: MLP + Transformer          | Track  34.25% F1 0.3258 |  10.8s
+  Proposed: MLP + Causal TCN + LSTM    | Track  35.41% F1 0.3373 |  11.0s
+
+==============================================================================
+FOLD 5/5  (train=9,929, val=2,482)
+==============================================================================
+  Majority Class (reference)           | Track  43.55% F1 0.1517 |   0.0s
+  Logistic Regression                  | Track  36.66% F1 0.3471 |   3.4s
+  Random Forest                        | Track  41.10% F1 0.3469 |   0.7s
+  HistGradientBoosting                 | Track  38.92% F1 0.3553 |   2.7s
+  Static MLP Only                      | Track  32.63% F1 0.3047 |   5.5s
+  Standalone LSTM                      | Track  33.96% F1 0.3087 |   6.0s
+  Hybrid 1: MLP + CNN + LSTM           | Track  35.41% F1 0.3381 |  10.5s
+  Hybrid 2: MLP + BiLSTM               | Track  34.81% F1 0.3328 |  10.2s
+  Hybrid 3: MLP + GRU                  | Track  35.90% F1 0.3347 |   9.5s
+  Hybrid 4: MLP + Transformer          | Track  35.01% F1 0.3318 |  10.7s
+  Proposed: MLP + Causal TCN + LSTM    | Track  35.05% F1 0.3341 |  11.0s
+
+========================================================================================================================
+E1 DIRECT MACRO-TRACK (4 classes) - SUMMARY (5-fold stratified CV, Mean ± Std)
+========================================================================================================================
+             Category                             Model Macro-Track Top-1 Acc (%) Macro-Track Macro-F1 p-value vs Proposed (Macro-Track Macro-F1)
+         0: Reference        Majority Class (reference)              43.57 ± 0.02      0.1517 ± 0.0000                            1.596e-06 (***)
+    A: Traditional ML               Logistic Regression              36.79 ± 1.46      0.3471 ± 0.0135                                0.03267 (*)
+    A: Traditional ML                     Random Forest              40.62 ± 0.95      0.3399 ± 0.0121                              0.1335 (n.s.)
+    A: Traditional ML              HistGradientBoosting              38.76 ± 0.73      0.3505 ± 0.0087                              0.009509 (**)
+B: Single-Branch Deep                   Static MLP Only              31.99 ± 1.30      0.2974 ± 0.0066                            0.0001061 (***)
+B: Single-Branch Deep                   Standalone LSTM              31.88 ± 1.94      0.2868 ± 0.0149                              0.005331 (**)
+   C: Hybrid Baseline        Hybrid 1: MLP + CNN + LSTM              34.11 ± 1.30      0.3229 ± 0.0103                              0.2569 (n.s.)
+   C: Hybrid Baseline            Hybrid 2: MLP + BiLSTM              34.39 ± 1.08      0.3238 ± 0.0071                              0.1489 (n.s.)
+   C: Hybrid Baseline               Hybrid 3: MLP + GRU              34.65 ± 1.43      0.3261 ± 0.0106                              0.7057 (n.s.)
+   C: Hybrid Baseline       Hybrid 4: MLP + Transformer              33.70 ± 1.78      0.3174 ± 0.0140                                0.04099 (*)
+          D: Proposed Proposed: MLP + Causal TCN + LSTM              34.91 ± 1.30      0.3277 ± 0.0089                                          —
+
+Significance: paired t-test (scipy.stats.ttest_rel) on fold-wise Macro-Track Macro-F1, df=4. * p<0.05, ** p<0.01, *** p<0.001, n.s. not significant.
+
+Best Macro-Track Macro-F1 model: HistGradientBoosting (0.3505 ± 0.0087)
+Proposed model targets: Macro-Track Top-1 > 80% -> 34.91% (NOT MET)
+
+Saved: objective1_E1_results.csv (summary), objective1_E1_folds.csv (fold-wise raw metrics)
+Runtime: 5.9 min
+
+########################################################################################################################
+E2 NO CLASS WEIGHTS
+########################################################################################################################
+[Setup] labels=ACADEMIC_PROGRAM (21 classes) | weighted=False | temporal=(B, 3, 4) ['MAT_S11', 'CR_S11', 'CC_S11', 'BIO_S11', 'ENG_S11', 'G_SC', 'PERCENTILE', '2ND_DECILE', 'QUARTILE', 'STEM_AVG', 'HUM_AVG', 'STEM_HUM_RATIO']
+[CV] WARNING - smallest class has 1 samples (< 5 folds); it will be missing from some validation folds.
+
+==============================================================================
+FOLD 1/5  (train=9,928, val=2,483)
+==============================================================================
+  Majority Class (reference)           | Track  43.58% F1 0.1518 | Top1  42.85% | Top3  78.74% | F1 0.0286 |   0.0s
+  Logistic Regression                  | Track  46.40% F1 0.3215 | Top1  43.62% | Top3  82.12% | F1 0.0547 |  17.5s
+  Random Forest                        | Track  44.58% F1 0.2847 | Top1  42.53% | Top3  81.27% | F1 0.0457 |   0.9s
+  HistGradientBoosting                 | Track  37.78% F1 0.2903 | Top1  29.84% | Top3  62.91% | F1 0.0597 |  13.0s
+  Static MLP Only                      | Track  42.45% F1 0.2751 | Top1  42.73% | Top3  81.31% | F1 0.0435 |   5.2s
+  Standalone LSTM                      | Track  44.14% F1 0.1801 | Top1  42.93% | Top3  79.38% | F1 0.0297 |   5.5s
+  Hybrid 1: MLP + CNN + LSTM           | Track  45.19% F1 0.2983 | Top1  43.09% | Top3  80.95% | F1 0.0470 |   9.5s
+  Hybrid 2: MLP + BiLSTM               | Track  45.23% F1 0.3005 | Top1  43.29% | Top3  80.55% | F1 0.0515 |   9.1s
+  Hybrid 3: MLP + GRU                  | Track  45.11% F1 0.2918 | Top1  43.58% | Top3  81.07% | F1 0.0520 |   9.2s
+  Hybrid 4: MLP + Transformer          | Track  43.66% F1 0.2939 | Top1  42.49% | Top3  80.99% | F1 0.0485 |  11.3s
+  Proposed: MLP + Causal TCN + LSTM    | Track  45.23% F1 0.3094 | Top1  42.69% | Top3  80.71% | F1 0.0508 |  10.1s
+
+==============================================================================
+FOLD 2/5  (train=9,929, val=2,482)
+==============================================================================
+  Majority Class (reference)           | Track  43.59% F1 0.1518 | Top1  42.87% | Top3  78.77% | F1 0.0286 |   0.0s
+  Logistic Regression                  | Track  46.33% F1 0.3204 | Top1  43.15% | Top3  81.99% | F1 0.0503 |  19.4s
+  Random Forest                        | Track  46.01% F1 0.2990 | Top1  43.39% | Top3  80.70% | F1 0.0457 |   1.0s
+  HistGradientBoosting                 | Track  35.13% F1 0.2839 | Top1  28.77% | Top3  55.12% | F1 0.0519 |  12.3s
+  Static MLP Only                      | Track  41.94% F1 0.2599 | Top1  42.51% | Top3  81.63% | F1 0.0425 |   5.4s
+  Standalone LSTM                      | Track  44.68% F1 0.2033 | Top1  42.91% | Top3  79.90% | F1 0.0287 |   6.3s
+  Hybrid 1: MLP + CNN + LSTM           | Track  44.96% F1 0.2989 | Top1  43.27% | Top3  81.87% | F1 0.0473 |  10.0s
+  Hybrid 2: MLP + BiLSTM               | Track  44.80% F1 0.2972 | Top1  43.03% | Top3  82.15% | F1 0.0497 |   9.4s
+  Hybrid 3: MLP + GRU                  | Track  46.21% F1 0.2967 | Top1  43.71% | Top3  81.87% | F1 0.0473 |   9.3s
+  Hybrid 4: MLP + Transformer          | Track  44.48% F1 0.2745 | Top1  42.87% | Top3  81.67% | F1 0.0450 |  10.9s
+  Proposed: MLP + Causal TCN + LSTM    | Track  44.60% F1 0.2970 | Top1  43.15% | Top3  82.19% | F1 0.0500 |  11.9s
+
+==============================================================================
+FOLD 3/5  (train=9,929, val=2,482)
+==============================================================================
+  Majority Class (reference)           | Track  43.55% F1 0.1517 | Top1  42.87% | Top3  78.77% | F1 0.0286 |   0.0s
+  Logistic Regression                  | Track  45.77% F1 0.3219 | Top1  43.27% | Top3  81.83% | F1 0.0552 |  18.7s
+  Random Forest                        | Track  45.17% F1 0.2979 | Top1  42.39% | Top3  81.79% | F1 0.0452 |   1.0s
+  HistGradientBoosting                 | Track  37.55% F1 0.2973 | Top1  30.70% | Top3  68.37% | F1 0.0685 |  12.2s
+  Static MLP Only                      | Track  43.23% F1 0.2775 | Top1  43.15% | Top3  82.31% | F1 0.0444 |   5.3s
+  Standalone LSTM                      | Track  43.67% F1 0.1830 | Top1  42.87% | Top3  79.98% | F1 0.0287 |   5.8s
+  Hybrid 1: MLP + CNN + LSTM           | Track  45.49% F1 0.3207 | Top1  43.63% | Top3  81.43% | F1 0.0521 |   9.2s
+  Hybrid 2: MLP + BiLSTM               | Track  45.21% F1 0.3118 | Top1  43.76% | Top3  81.43% | F1 0.0512 |   9.1s
+  Hybrid 3: MLP + GRU                  | Track  45.12% F1 0.3003 | Top1  43.43% | Top3  81.67% | F1 0.0491 |   9.3s
+  Hybrid 4: MLP + Transformer          | Track  43.47% F1 0.3004 | Top1  42.51% | Top3  82.11% | F1 0.0488 |  11.1s
+  Proposed: MLP + Causal TCN + LSTM    | Track  45.37% F1 0.3157 | Top1  43.55% | Top3  82.03% | F1 0.0508 |  10.3s
+
+==============================================================================
+FOLD 4/5  (train=9,929, val=2,482)
+==============================================================================
+  Majority Class (reference)           | Track  43.55% F1 0.1517 | Top1  42.83% | Top3  78.73% | F1 0.0286 |   0.0s
+  Logistic Regression                  | Track  44.24% F1 0.3049 | Top1  42.91% | Top3  81.02% | F1 0.0507 |  20.2s
+  Random Forest                        | Track  43.35% F1 0.2721 | Top1  41.70% | Top3  80.66% | F1 0.0435 |   0.9s
+  HistGradientBoosting                 | Track  37.51% F1 0.3037 | Top1  30.78% | Top3  54.23% | F1 0.0639 |  13.8s
+  Static MLP Only                      | Track  42.55% F1 0.2718 | Top1  42.10% | Top3  80.50% | F1 0.0425 |   5.2s
+  Standalone LSTM                      | Track  43.92% F1 0.1850 | Top1  42.87% | Top3  80.54% | F1 0.0292 |   5.7s
+  Hybrid 1: MLP + CNN + LSTM           | Track  43.43% F1 0.2918 | Top1  41.66% | Top3  80.86% | F1 0.0464 |   9.4s
+  Hybrid 2: MLP + BiLSTM               | Track  42.95% F1 0.2730 | Top1  42.26% | Top3  81.14% | F1 0.0482 |  10.0s
+  Hybrid 3: MLP + GRU                  | Track  42.71% F1 0.2797 | Top1  41.26% | Top3  81.10% | F1 0.0449 |   9.3s
+  Hybrid 4: MLP + Transformer          | Track  42.79% F1 0.2905 | Top1  41.62% | Top3  80.54% | F1 0.0490 |  10.6s
+  Proposed: MLP + Causal TCN + LSTM    | Track  42.75% F1 0.2839 | Top1  41.14% | Top3  81.63% | F1 0.0460 |  11.5s
+
+==============================================================================
+FOLD 5/5  (train=9,929, val=2,482)
+==============================================================================
+  Majority Class (reference)           | Track  43.55% F1 0.1517 | Top1  42.83% | Top3  78.73% | F1 0.0286 |   0.0s
+  Logistic Regression                  | Track  44.96% F1 0.3031 | Top1  42.87% | Top3  80.46% | F1 0.0523 |  20.2s
+  Random Forest                        | Track  44.60% F1 0.2835 | Top1  42.83% | Top3  80.66% | F1 0.0458 |   0.9s
+  HistGradientBoosting                 | Track  35.82% F1 0.2738 | Top1  29.69% | Top3  61.60% | F1 0.0565 |  13.6s
+  Static MLP Only                      | Track  44.00% F1 0.2798 | Top1  43.43% | Top3  80.70% | F1 0.0436 |   5.1s
+  Standalone LSTM                      | Track  43.96% F1 0.2036 | Top1  42.75% | Top3  80.02% | F1 0.0296 |   5.7s
+  Hybrid 1: MLP + CNN + LSTM           | Track  44.92% F1 0.2938 | Top1  43.39% | Top3  80.70% | F1 0.0518 |   9.8s
+  Hybrid 2: MLP + BiLSTM               | Track  44.72% F1 0.2970 | Top1  42.83% | Top3  80.30% | F1 0.0486 |   9.3s
+  Hybrid 3: MLP + GRU                  | Track  44.96% F1 0.3088 | Top1  42.71% | Top3  80.94% | F1 0.0533 |   8.7s
+  Hybrid 4: MLP + Transformer          | Track  45.04% F1 0.2943 | Top1  42.87% | Top3  80.46% | F1 0.0460 |  10.8s
+  Proposed: MLP + Causal TCN + LSTM    | Track  44.92% F1 0.2958 | Top1  43.51% | Top3  80.78% | F1 0.0538 |  11.2s
+
+========================================================================================================================
+E2 NO CLASS WEIGHTS - SUMMARY (5-fold stratified CV, Mean ± Std)
+========================================================================================================================
+             Category                             Model Macro-Track Top-1 Acc (%) Macro-Track Macro-F1 Granular Top-1 Acc (%) Granular Top-3 Acc (%) Granular Macro-F1 p-value vs Proposed (Granular Macro-F1)
+         0: Reference        Majority Class (reference)              43.57 ± 0.02      0.1517 ± 0.0000           42.85 ± 0.02           78.74 ± 0.02   0.0286 ± 0.0000                         6.561e-05 (***)
+    A: Traditional ML               Logistic Regression              45.54 ± 0.93      0.3143 ± 0.0095           43.16 ± 0.30           81.48 ± 0.71   0.0526 ± 0.0022                           0.1315 (n.s.)
+    A: Traditional ML                     Random Forest              44.74 ± 0.97      0.2874 ± 0.0112           42.57 ± 0.62           81.02 ± 0.50   0.0452 ± 0.0010                           0.004831 (**)
+    A: Traditional ML              HistGradientBoosting              36.76 ± 1.20      0.2898 ± 0.0116           29.96 ± 0.83           60.45 ± 5.86   0.0601 ± 0.0064                              0.0473 (*)
+B: Single-Branch Deep                   Static MLP Only              42.83 ± 0.80      0.2728 ± 0.0078           42.78 ± 0.52           81.29 ± 0.73   0.0433 ± 0.0008                           0.003036 (**)
+B: Single-Branch Deep                   Standalone LSTM              44.07 ± 0.38      0.1910 ± 0.0115           42.87 ± 0.07           79.96 ± 0.41   0.0292 ± 0.0005                         6.119e-05 (***)
+   C: Hybrid Baseline        Hybrid 1: MLP + CNN + LSTM              44.80 ± 0.80      0.3007 ± 0.0116           43.01 ± 0.78           81.16 ± 0.48   0.0489 ± 0.0028                           0.2405 (n.s.)
+   C: Hybrid Baseline            Hybrid 2: MLP + BiLSTM              44.58 ± 0.94      0.2959 ± 0.0142           43.03 ± 0.55           81.11 ± 0.74   0.0498 ± 0.0015                           0.7379 (n.s.)
+   C: Hybrid Baseline               Hybrid 3: MLP + GRU              44.82 ± 1.28      0.2955 ± 0.0107           42.94 ± 1.02           81.33 ± 0.41   0.0493 ± 0.0034                           0.2331 (n.s.)
+   C: Hybrid Baseline       Hybrid 4: MLP + Transformer              43.89 ± 0.88      0.2907 ± 0.0098           42.47 ± 0.51           81.15 ± 0.72   0.0475 ± 0.0018                           0.1977 (n.s.)
+          D: Proposed Proposed: MLP + Causal TCN + LSTM              44.57 ± 1.06      0.3004 ± 0.0125           42.81 ± 1.00           81.47 ± 0.69   0.0503 ± 0.0028                                       —
+
+Significance: paired t-test (scipy.stats.ttest_rel) on fold-wise Granular Macro-F1, df=4. * p<0.05, ** p<0.01, *** p<0.001, n.s. not significant.
+
+Best Granular Macro-F1 model: HistGradientBoosting (0.0601 ± 0.0064)
+Proposed model targets: Macro-Track Top-1 > 80% -> 44.57% (NOT MET); Granular Top-3 > 85% -> 81.47% (NOT MET)
+
+Saved: objective1_E2_results.csv (summary), objective1_E2_folds.csv (fold-wise raw metrics)
+Runtime: 7.9 min
+
+########################################################################################################################
+E3 RARE MAJORS GROUPED (< 30 -> OTHER per track)
+########################################################################################################################
+[Setup] labels=PROGRAM_GROUPED (16 classes) | weighted=True | temporal=(B, 3, 4) ['MAT_S11', 'CR_S11', 'CC_S11', 'BIO_S11', 'ENG_S11', 'G_SC', 'PERCENTILE', '2ND_DECILE', 'QUARTILE', 'STEM_AVG', 'HUM_AVG', 'STEM_HUM_RATIO']
+
+==============================================================================
+FOLD 1/5  (train=9,928, val=2,483)
+==============================================================================
+  Majority Class (reference)           | Track  43.58% F1 0.1518 | Top1  42.85% | Top3  78.74% | F1 0.0375 |   0.0s
+  Logistic Regression                  | Track  29.12% F1 0.2480 | Top1  10.55% | Top3  40.31% | F1 0.0619 |   5.7s
+  Random Forest                        | Track  33.27% F1 0.2693 | Top1  31.01% | Top3  71.69% | F1 0.0894 |   0.6s
+  HistGradientBoosting                 | Track  37.33% F1 0.3425 | Top1  32.50% | Top3  74.91% | F1 0.1016 |  12.1s
+  Static MLP Only                      | Track  27.39% F1 0.2195 | Top1   9.95% | Top3  46.27% | F1 0.0578 |   5.4s
+  Standalone LSTM                      | Track  20.62% F1 0.1004 | Top1   2.66% | Top3  19.33% | F1 0.0237 |   5.4s
+  Hybrid 1: MLP + CNN + LSTM           | Track  29.48% F1 0.2401 | Top1  15.38% | Top3  52.64% | F1 0.0751 |   9.8s
+  Hybrid 2: MLP + BiLSTM               | Track  28.96% F1 0.2340 | Top1  14.58% | Top3  50.83% | F1 0.0719 |   9.6s
+  Hybrid 3: MLP + GRU                  | Track  30.17% F1 0.2411 | Top1  15.79% | Top3  51.91% | F1 0.0709 |   9.2s
+  Hybrid 4: MLP + Transformer          | Track  27.87% F1 0.2136 | Top1  14.62% | Top3  50.42% | F1 0.0702 |  11.1s
+  Proposed: MLP + Causal TCN + LSTM    | Track  29.20% F1 0.2404 | Top1  13.17% | Top3  48.57% | F1 0.0623 |  11.3s
+
+==============================================================================
+FOLD 2/5  (train=9,929, val=2,482)
+==============================================================================
+  Majority Class (reference)           | Track  43.59% F1 0.1518 | Top1  42.87% | Top3  78.77% | F1 0.0375 |   0.0s
+  Logistic Regression                  | Track  29.41% F1 0.2508 | Top1  10.19% | Top3  40.69% | F1 0.0559 |   7.4s
+  Random Forest                        | Track  31.59% F1 0.2602 | Top1  30.50% | Top3  72.20% | F1 0.0854 |   0.8s
+  HistGradientBoosting                 | Track  36.66% F1 0.3232 | Top1  32.43% | Top3  76.63% | F1 0.0847 |  11.3s
+  Static MLP Only                      | Track  25.38% F1 0.1829 | Top1   8.66% | Top3  41.22% | F1 0.0485 |   5.1s
+  Standalone LSTM                      | Track  20.35% F1 0.0952 | Top1   5.96% | Top3  27.20% | F1 0.0306 |   5.9s
+  Hybrid 1: MLP + CNN + LSTM           | Track  28.53% F1 0.2221 | Top1  12.41% | Top3  43.15% | F1 0.0633 |   9.6s
+  Hybrid 2: MLP + BiLSTM               | Track  30.10% F1 0.2304 | Top1  12.33% | Top3  46.05% | F1 0.0572 |   9.1s
+  Hybrid 3: MLP + GRU                  | Track  29.01% F1 0.2356 | Top1  14.42% | Top3  46.54% | F1 0.0647 |   8.6s
+  Hybrid 4: MLP + Transformer          | Track  28.20% F1 0.2274 | Top1  13.26% | Top3  44.44% | F1 0.0601 |  11.2s
+  Proposed: MLP + Causal TCN + LSTM    | Track  29.25% F1 0.2340 | Top1  15.87% | Top3  48.07% | F1 0.0742 |  10.9s
+
+==============================================================================
+FOLD 3/5  (train=9,929, val=2,482)
+==============================================================================
+  Majority Class (reference)           | Track  43.55% F1 0.1517 | Top1  42.87% | Top3  78.77% | F1 0.0375 |   0.0s
+  Logistic Regression                  | Track  30.90% F1 0.2553 | Top1  10.44% | Top3  41.46% | F1 0.0647 |   5.6s
+  Random Forest                        | Track  33.04% F1 0.2709 | Top1  31.31% | Top3  73.21% | F1 0.0854 |   0.7s
+  HistGradientBoosting                 | Track  37.27% F1 0.3260 | Top1  32.03% | Top3  75.18% | F1 0.0877 |  12.0s
+  Static MLP Only                      | Track  27.76% F1 0.2132 | Top1   5.44% | Top3  37.47% | F1 0.0372 |   5.6s
+  Standalone LSTM                      | Track  20.51% F1 0.0938 | Top1   3.06% | Top3  22.48% | F1 0.0218 |   6.2s
+  Hybrid 1: MLP + CNN + LSTM           | Track  29.53% F1 0.2336 | Top1  11.08% | Top3  45.61% | F1 0.0623 |   9.9s
+  Hybrid 2: MLP + BiLSTM               | Track  29.98% F1 0.2414 | Top1  12.21% | Top3  47.10% | F1 0.0598 |  10.0s
+  Hybrid 3: MLP + GRU                  | Track  30.66% F1 0.2591 | Top1  13.22% | Top3  48.51% | F1 0.0644 |   8.8s
+  Hybrid 4: MLP + Transformer          | Track  30.62% F1 0.2444 | Top1  12.97% | Top3  47.18% | F1 0.0680 |  10.9s
+  Proposed: MLP + Causal TCN + LSTM    | Track  28.40% F1 0.2272 | Top1  13.46% | Top3  48.43% | F1 0.0674 |  11.3s
+
+==============================================================================
+FOLD 4/5  (train=9,929, val=2,482)
+==============================================================================
+  Majority Class (reference)           | Track  43.55% F1 0.1517 | Top1  42.83% | Top3  78.73% | F1 0.0375 |   0.0s
+  Logistic Regression                  | Track  29.13% F1 0.2492 | Top1  10.27% | Top3  42.10% | F1 0.0600 |   5.5s
+  Random Forest                        | Track  32.39% F1 0.2640 | Top1  29.17% | Top3  72.76% | F1 0.0811 |   0.7s
+  HistGradientBoosting                 | Track  37.79% F1 0.3373 | Top1  32.84% | Top3  74.86% | F1 0.0874 |  11.4s
+  Static MLP Only                      | Track  25.71% F1 0.2101 | Top1   8.06% | Top3  44.64% | F1 0.0431 |   5.9s
+  Standalone LSTM                      | Track  20.99% F1 0.0993 | Top1   4.35% | Top3  24.38% | F1 0.0237 |   5.9s
+  Hybrid 1: MLP + CNN + LSTM           | Track  27.28% F1 0.2310 | Top1  15.19% | Top3  49.27% | F1 0.0626 |  10.2s
+  Hybrid 2: MLP + BiLSTM               | Track  27.64% F1 0.2252 | Top1  14.30% | Top3  48.83% | F1 0.0666 |  10.0s
+  Hybrid 3: MLP + GRU                  | Track  29.57% F1 0.2546 | Top1  15.59% | Top3  50.77% | F1 0.0640 |   9.5s
+  Hybrid 4: MLP + Transformer          | Track  27.56% F1 0.2389 | Top1  12.65% | Top3  48.71% | F1 0.0607 |  10.4s
+  Proposed: MLP + Causal TCN + LSTM    | Track  28.28% F1 0.2380 | Top1  15.03% | Top3  49.32% | F1 0.0664 |  11.3s
+
+==============================================================================
+FOLD 5/5  (train=9,929, val=2,482)
+==============================================================================
+  Majority Class (reference)           | Track  43.55% F1 0.1517 | Top1  42.83% | Top3  78.73% | F1 0.0375 |   0.0s
+  Logistic Regression                  | Track  29.33% F1 0.2406 | Top1   9.59% | Top3  38.96% | F1 0.0584 |   5.6s
+  Random Forest                        | Track  31.31% F1 0.2581 | Top1  28.61% | Top3  72.16% | F1 0.0860 |   0.6s
+  HistGradientBoosting                 | Track  35.66% F1 0.3189 | Top1  30.62% | Top3  74.29% | F1 0.0804 |  11.4s
+  Static MLP Only                      | Track  27.07% F1 0.1999 | Top1   6.08% | Top3  33.00% | F1 0.0461 |   5.2s
+  Standalone LSTM                      | Track  21.56% F1 0.1214 | Top1   3.14% | Top3  29.53% | F1 0.0151 |   6.4s
+  Hybrid 1: MLP + CNN + LSTM           | Track  29.25% F1 0.2315 | Top1  12.53% | Top3  44.36% | F1 0.0670 |   9.9s
+  Hybrid 2: MLP + BiLSTM               | Track  27.52% F1 0.2093 | Top1  11.04% | Top3  41.54% | F1 0.0587 |   9.1s
+  Hybrid 3: MLP + GRU                  | Track  27.64% F1 0.2120 | Top1  10.60% | Top3  42.95% | F1 0.0534 |   8.0s
+  Hybrid 4: MLP + Transformer          | Track  26.35% F1 0.2137 | Top1  11.36% | Top3  43.35% | F1 0.0676 |  11.1s
+  Proposed: MLP + Causal TCN + LSTM    | Track  26.59% F1 0.2040 | Top1  10.96% | Top3  40.37% | F1 0.0600 |  10.8s
+
+========================================================================================================================
+E3 RARE MAJORS GROUPED (< 30 -> OTHER per track) - SUMMARY (5-fold stratified CV, Mean ± Std)
+========================================================================================================================
+             Category                             Model Macro-Track Top-1 Acc (%) Macro-Track Macro-F1 Granular Top-1 Acc (%) Granular Top-3 Acc (%) Granular Macro-F1 p-value vs Proposed (Granular Macro-F1)
+         0: Reference        Majority Class (reference)              43.57 ± 0.02      0.1517 ± 0.0000           42.85 ± 0.02           78.74 ± 0.02   0.0375 ± 0.0000                         0.0003008 (***)
+    A: Traditional ML               Logistic Regression              29.58 ± 0.75      0.2488 ± 0.0053           10.21 ± 0.37           40.71 ± 1.20   0.0602 ± 0.0033                            0.144 (n.s.)
+    A: Traditional ML                     Random Forest              32.32 ± 0.86      0.2645 ± 0.0056           30.12 ± 1.18           72.40 ± 0.59   0.0855 ± 0.0029                           0.003332 (**)
+    A: Traditional ML              HistGradientBoosting              36.94 ± 0.82      0.3296 ± 0.0099           32.08 ± 0.87           75.18 ± 0.88   0.0884 ± 0.0080                           0.008856 (**)
+B: Single-Branch Deep                   Static MLP Only              26.66 ± 1.06      0.2051 ± 0.0143            7.64 ± 1.86           40.52 ± 5.40   0.0465 ± 0.0076                             0.01317 (*)
+B: Single-Branch Deep                   Standalone LSTM              20.80 ± 0.48      0.1020 ± 0.0112            3.84 ± 1.35           24.58 ± 3.98   0.0230 ± 0.0055                         3.792e-06 (***)
+   C: Hybrid Baseline        Hybrid 1: MLP + CNN + LSTM              28.81 ± 0.95      0.2317 ± 0.0065           13.32 ± 1.89           47.01 ± 3.90   0.0661 ± 0.0054                                1 (n.s.)
+   C: Hybrid Baseline            Hybrid 2: MLP + BiLSTM              28.84 ± 1.23      0.2281 ± 0.0120           12.89 ± 1.50           46.87 ± 3.49   0.0628 ± 0.0062                           0.5024 (n.s.)
+   C: Hybrid Baseline               Hybrid 3: MLP + GRU              29.41 ± 1.17      0.2405 ± 0.0186           13.92 ± 2.13           48.13 ± 3.56   0.0635 ± 0.0063                           0.4455 (n.s.)
+   C: Hybrid Baseline       Hybrid 4: MLP + Transformer              28.12 ± 1.56      0.2276 ± 0.0141           12.97 ± 1.17           46.82 ± 2.93   0.0653 ± 0.0046                           0.8712 (n.s.)
+          D: Proposed Proposed: MLP + Causal TCN + LSTM              28.35 ± 1.08      0.2287 ± 0.0147           13.70 ± 1.89           46.95 ± 3.71   0.0661 ± 0.0054                                       —
+
+Significance: paired t-test (scipy.stats.ttest_rel) on fold-wise Granular Macro-F1, df=4. * p<0.05, ** p<0.01, *** p<0.001, n.s. not significant.
+
+Best Granular Macro-F1 model: HistGradientBoosting (0.0884 ± 0.0080)
+Proposed model targets: Macro-Track Top-1 > 80% -> 28.35% (NOT MET); Granular Top-3 > 85% -> 46.95% (NOT MET)
+
+Saved: objective1_E3_results.csv (summary), objective1_E3_folds.csv (fold-wise raw metrics)
+Runtime: 6.7 min
+
+########################################################################################################################
+E4 NO SABER PRO FEATURES (8 temporal features, 2 steps)
+########################################################################################################################
+[Setup] labels=ACADEMIC_PROGRAM (21 classes) | weighted=True | temporal=(B, 2, 4) ['MAT_S11', 'CR_S11', 'CC_S11', 'BIO_S11', 'ENG_S11', 'STEM_AVG', 'HUM_AVG', 'STEM_HUM_RATIO']
+[CV] WARNING - smallest class has 1 samples (< 5 folds); it will be missing from some validation folds.
+
+==============================================================================
+FOLD 1/5  (train=9,928, val=2,483)
+==============================================================================
+  Majority Class (reference)           | Track  43.58% F1 0.1518 | Top1  42.85% | Top3  78.74% | F1 0.0286 |   0.0s
+  Logistic Regression                  | Track  28.27% F1 0.2361 | Top1   9.42% | Top3  39.03% | F1 0.0475 |   8.2s
+  Random Forest                        | Track  29.88% F1 0.2380 | Top1  30.57% | Top3  69.96% | F1 0.0665 |   0.7s
+  HistGradientBoosting                 | Track  37.98% F1 0.3428 | Top1  32.34% | Top3  74.55% | F1 0.0652 |  14.3s
+  Static MLP Only                      | Track  26.50% F1 0.2100 | Top1   6.52% | Top3  37.25% | F1 0.0351 |   5.3s
+  Standalone LSTM                      | Track  20.46% F1 0.0922 | Top1   3.14% | Top3  26.18% | F1 0.0175 |   5.3s
+  Hybrid 1: MLP + CNN + LSTM           | Track  27.18% F1 0.2113 | Top1  13.33% | Top3  49.09% | F1 0.0500 |   9.1s
+  Hybrid 2: MLP + BiLSTM               | Track  28.72% F1 0.2374 | Top1  12.89% | Top3  44.22% | F1 0.0455 |   9.0s
+  Hybrid 3: MLP + GRU                  | Track  27.63% F1 0.2139 | Top1  14.22% | Top3  48.77% | F1 0.0578 |   7.7s
+  Hybrid 4: MLP + Transformer          | Track  27.83% F1 0.2244 | Top1  10.83% | Top3  42.65% | F1 0.0421 |   9.7s
+  Proposed: MLP + Causal TCN + LSTM    | Track  27.35% F1 0.2190 | Top1  12.93% | Top3  45.95% | F1 0.0502 |  11.2s
+
+==============================================================================
+FOLD 2/5  (train=9,929, val=2,482)
+==============================================================================
+  Majority Class (reference)           | Track  43.59% F1 0.1518 | Top1  42.87% | Top3  78.77% | F1 0.0286 |   0.0s
+  Logistic Regression                  | Track  30.10% F1 0.2603 | Top1   9.51% | Top3  40.53% | F1 0.0451 |   9.3s
+  Random Forest                        | Track  29.45% F1 0.2336 | Top1  30.14% | Top3  69.50% | F1 0.0659 |   0.6s
+  HistGradientBoosting                 | Track  36.83% F1 0.3258 | Top1  31.43% | Top3  74.21% | F1 0.0692 |  15.1s
+  Static MLP Only                      | Track  26.03% F1 0.1762 | Top1   6.53% | Top3  35.74% | F1 0.0312 |   5.3s
+  Standalone LSTM                      | Track  20.51% F1 0.0901 | Top1   1.77% | Top3  24.38% | F1 0.0138 |   6.3s
+  Hybrid 1: MLP + CNN + LSTM           | Track  28.77% F1 0.2150 | Top1  14.26% | Top3  48.07% | F1 0.0556 |   9.3s
+  Hybrid 2: MLP + BiLSTM               | Track  29.25% F1 0.2069 | Top1  12.93% | Top3  43.15% | F1 0.0521 |   9.0s
+  Hybrid 3: MLP + GRU                  | Track  27.96% F1 0.2051 | Top1  11.60% | Top3  43.23% | F1 0.0529 |   7.8s
+  Hybrid 4: MLP + Transformer          | Track  27.84% F1 0.2006 | Top1  11.89% | Top3  43.43% | F1 0.0475 |  10.0s
+  Proposed: MLP + Causal TCN + LSTM    | Track  26.75% F1 0.1856 | Top1  11.52% | Top3  41.34% | F1 0.0416 |  11.3s
+
+==============================================================================
+FOLD 3/5  (train=9,929, val=2,482)
+==============================================================================
+  Majority Class (reference)           | Track  43.55% F1 0.1517 | Top1  42.87% | Top3  78.77% | F1 0.0286 |   0.0s
+  Logistic Regression                  | Track  30.46% F1 0.2556 | Top1   9.79% | Top3  39.40% | F1 0.0466 |   8.5s
+  Random Forest                        | Track  29.41% F1 0.2271 | Top1  30.42% | Top3  70.51% | F1 0.0715 |   0.6s
+  HistGradientBoosting                 | Track  37.03% F1 0.3270 | Top1  30.42% | Top3  74.05% | F1 0.0600 |  14.1s
+  Static MLP Only                      | Track  25.26% F1 0.1765 | Top1   5.84% | Top3  34.49% | F1 0.0342 |   5.1s
+  Standalone LSTM                      | Track  20.47% F1 0.0876 | Top1   1.93% | Top3  21.84% | F1 0.0123 |   5.8s
+  Hybrid 1: MLP + CNN + LSTM           | Track  27.84% F1 0.2168 | Top1  11.28% | Top3  45.61% | F1 0.0492 |   9.6s
+  Hybrid 2: MLP + BiLSTM               | Track  26.67% F1 0.1875 | Top1  11.08% | Top3  44.68% | F1 0.0429 |   8.6s
+  Hybrid 3: MLP + GRU                  | Track  28.36% F1 0.2180 | Top1  10.96% | Top3  46.41% | F1 0.0429 |   8.1s
+  Hybrid 4: MLP + Transformer          | Track  28.81% F1 0.2165 | Top1  11.00% | Top3  41.58% | F1 0.0441 |  10.5s
+  Proposed: MLP + Causal TCN + LSTM    | Track  28.40% F1 0.2091 | Top1  10.96% | Top3  43.76% | F1 0.0485 |  10.4s
+
+==============================================================================
+FOLD 4/5  (train=9,929, val=2,482)
+==============================================================================
+  Majority Class (reference)           | Track  43.55% F1 0.1517 | Top1  42.83% | Top3  78.73% | F1 0.0286 |   0.0s
+  Logistic Regression                  | Track  28.53% F1 0.2391 | Top1   9.67% | Top3  40.89% | F1 0.0441 |   9.1s
+  Random Forest                        | Track  30.10% F1 0.2482 | Top1  30.02% | Top3  70.95% | F1 0.0626 |   0.6s
+  HistGradientBoosting                 | Track  36.99% F1 0.3297 | Top1  31.22% | Top3  75.42% | F1 0.0642 |  15.1s
+  Static MLP Only                      | Track  28.08% F1 0.2238 | Top1   5.56% | Top3  36.54% | F1 0.0289 |   5.5s
+  Standalone LSTM                      | Track  20.23% F1 0.0858 | Top1   1.53% | Top3   9.75% | F1 0.0129 |   6.2s
+  Hybrid 1: MLP + CNN + LSTM           | Track  28.16% F1 0.2326 | Top1  10.88% | Top3  41.74% | F1 0.0422 |   9.5s
+  Hybrid 2: MLP + BiLSTM               | Track  27.76% F1 0.2165 | Top1   9.63% | Top3  39.89% | F1 0.0450 |   9.3s
+  Hybrid 3: MLP + GRU                  | Track  27.56% F1 0.2336 | Top1  11.04% | Top3  43.96% | F1 0.0455 |   9.2s
+  Hybrid 4: MLP + Transformer          | Track  27.60% F1 0.2272 | Top1   8.22% | Top3  42.43% | F1 0.0422 |  11.3s
+  Proposed: MLP + Causal TCN + LSTM    | Track  27.24% F1 0.2163 | Top1  11.04% | Top3  43.31% | F1 0.0473 |  11.0s
+
+==============================================================================
+FOLD 5/5  (train=9,929, val=2,482)
+==============================================================================
+  Majority Class (reference)           | Track  43.55% F1 0.1517 | Top1  42.83% | Top3  78.73% | F1 0.0286 |   0.0s
+  Logistic Regression                  | Track  27.92% F1 0.2370 | Top1   8.34% | Top3  37.39% | F1 0.0446 |   7.7s
+  Random Forest                        | Track  30.30% F1 0.2417 | Top1  28.20% | Top3  69.58% | F1 0.0631 |   0.7s
+  HistGradientBoosting                 | Track  35.94% F1 0.3249 | Top1  30.34% | Top3  73.93% | F1 0.0619 |  14.7s
+  Static MLP Only                      | Track  26.27% F1 0.1901 | Top1   7.29% | Top3  34.93% | F1 0.0376 |   5.6s
+  Standalone LSTM                      | Track  20.39% F1 0.0860 | Top1   2.94% | Top3  21.80% | F1 0.0243 |   5.9s
+  Hybrid 1: MLP + CNN + LSTM           | Track  26.03% F1 0.1969 | Top1  11.08% | Top3  42.22% | F1 0.0517 |  10.0s
+  Hybrid 2: MLP + BiLSTM               | Track  27.32% F1 0.2039 | Top1  11.76% | Top3  45.61% | F1 0.0497 |   9.4s
+  Hybrid 3: MLP + GRU                  | Track  26.31% F1 0.1921 | Top1  10.64% | Top3  40.69% | F1 0.0468 |   8.7s
+  Hybrid 4: MLP + Transformer          | Track  28.57% F1 0.2321 | Top1  11.44% | Top3  43.19% | F1 0.0511 |  11.3s
+  Proposed: MLP + Causal TCN + LSTM    | Track  27.07% F1 0.2010 | Top1  10.88% | Top3  38.92% | F1 0.0443 |  11.5s
+
+========================================================================================================================
+E4 NO SABER PRO FEATURES (8 temporal features, 2 steps) - SUMMARY (5-fold stratified CV, Mean ± Std)
+========================================================================================================================
+             Category                             Model Macro-Track Top-1 Acc (%) Macro-Track Macro-F1 Granular Top-1 Acc (%) Granular Top-3 Acc (%) Granular Macro-F1 p-value vs Proposed (Granular Macro-F1)
+         0: Reference        Majority Class (reference)              43.57 ± 0.02      0.1517 ± 0.0000           42.85 ± 0.02           78.74 ± 0.02   0.0286 ± 0.0000                         0.0003066 (***)
+    A: Traditional ML               Logistic Regression              29.05 ± 1.14      0.2456 ± 0.0114            9.35 ± 0.58           39.45 ± 1.39   0.0456 ± 0.0014                           0.5526 (n.s.)
+    A: Traditional ML                     Random Forest              29.83 ± 0.39      0.2378 ± 0.0080           29.87 ± 0.96           70.10 ± 0.62   0.0659 ± 0.0035                         0.0003789 (***)
+    A: Traditional ML              HistGradientBoosting              36.95 ± 0.73      0.3300 ± 0.0074           31.15 ± 0.82           74.43 ± 0.60   0.0641 ± 0.0035                            0.00268 (**)
+B: Single-Branch Deep                   Static MLP Only              26.43 ± 1.04      0.1953 ± 0.0211            6.35 ± 0.68           35.79 ± 1.13   0.0334 ± 0.0034                           0.002993 (**)
+B: Single-Branch Deep                   Standalone LSTM              20.41 ± 0.11      0.0883 ± 0.0028            2.26 ± 0.73           20.79 ± 6.44   0.0162 ± 0.0050                         0.0004935 (***)
+   C: Hybrid Baseline        Hybrid 1: MLP + CNN + LSTM              27.60 ± 1.05      0.2145 ± 0.0128           12.17 ± 1.53           45.35 ± 3.33   0.0497 ± 0.0049                           0.3663 (n.s.)
+   C: Hybrid Baseline            Hybrid 2: MLP + BiLSTM              27.94 ± 1.04      0.2104 ± 0.0183           11.66 ± 1.38           43.51 ± 2.21   0.0470 ± 0.0038                           0.8439 (n.s.)
+   C: Hybrid Baseline               Hybrid 3: MLP + GRU              27.56 ± 0.77      0.2126 ± 0.0154           11.69 ± 1.45           44.61 ± 3.09   0.0492 ± 0.0061                           0.4126 (n.s.)
+   C: Hybrid Baseline       Hybrid 4: MLP + Transformer              28.13 ± 0.53      0.2201 ± 0.0123           10.68 ± 1.43           42.66 ± 0.72   0.0454 ± 0.0039                           0.7604 (n.s.)
+          D: Proposed Proposed: MLP + Causal TCN + LSTM              27.36 ± 0.62      0.2062 ± 0.0135           11.47 ± 0.86           42.66 ± 2.66   0.0464 ± 0.0034                                       —
+
+Significance: paired t-test (scipy.stats.ttest_rel) on fold-wise Granular Macro-F1, df=4. * p<0.05, ** p<0.01, *** p<0.001, n.s. not significant.
+
+Best Granular Macro-F1 model: Random Forest (0.0659 ± 0.0035)
+Proposed model targets: Macro-Track Top-1 > 80% -> 27.36% (NOT MET); Granular Top-3 > 85% -> 42.66% (NOT MET)
+
+Saved: objective1_E4_results.csv (summary), objective1_E4_folds.csv (fold-wise raw metrics)
+Runtime: 7.0 min
+
+########################################################################################################################
+ABLATION OVERVIEW (fold means)
+########################################################################################################################
+
+E0 BASELINE (21 majors, weighted, all features)
+                            Model  Macro-Track Top-1 Acc (%)  Macro-Track Macro-F1  Granular Top-1 Acc (%)  Granular Top-3 Acc (%)  Granular Macro-F1
+       Majority Class (reference)                    43.5662                0.1517                 42.8491                 78.7447             0.0286
+              Logistic Regression                    29.2483                0.2470                 10.3134                 40.2788             0.0487
+                    Random Forest                    28.7487                0.2264                 29.7557                 70.6872             0.0669
+             HistGradientBoosting                    36.9188                0.3329                 31.7299                 75.1995             0.0652
+                  Static MLP Only                    26.4282                0.1953                  6.3492                 35.7907             0.0334
+                  Standalone LSTM                    20.3771                0.0877                  2.6347                 21.2710             0.0145
+       Hybrid 1: MLP + CNN + LSTM                    27.6771                0.2121                 11.9086                 44.7584             0.0475
+           Hybrid 2: MLP + BiLSTM                    27.8139                0.2097                 11.6186                 43.8561             0.0485
+              Hybrid 3: MLP + GRU                    28.0961                0.2172                 11.8362                 43.7836             0.0504
+      Hybrid 4: MLP + Transformer                    27.9511                0.2170                 12.9319                 44.3314             0.0507
+Proposed: MLP + Causal TCN + LSTM                    28.3619                0.2170                 12.1424                 43.9288             0.0483
+
+E1 DIRECT MACRO-TRACK (4 classes)
+                            Model  Macro-Track Top-1 Acc (%)  Macro-Track Macro-F1  Granular Top-1 Acc (%)  Granular Top-3 Acc (%)  Granular Macro-F1
+       Majority Class (reference)                    43.5662                0.1517                     NaN                     NaN                NaN
+              Logistic Regression                    36.7899                0.3471                     NaN                     NaN                NaN
+                    Random Forest                    40.6173                0.3399                     NaN                     NaN                NaN
+             HistGradientBoosting                    38.7640                0.3505                     NaN                     NaN                NaN
+                  Static MLP Only                    31.9877                0.2974                     NaN                     NaN                NaN
+                  Standalone LSTM                    31.8752                0.2868                     NaN                     NaN                NaN
+       Hybrid 1: MLP + CNN + LSTM                    34.1068                0.3229                     NaN                     NaN                NaN
+           Hybrid 2: MLP + BiLSTM                    34.3888                0.3238                     NaN                     NaN                NaN
+              Hybrid 3: MLP + GRU                    34.6468                0.3261                     NaN                     NaN                NaN
+      Hybrid 4: MLP + Transformer                    33.7040                0.3174                     NaN                     NaN                NaN
+Proposed: MLP + Causal TCN + LSTM                    34.9126                0.3277                     NaN                     NaN                NaN
+
+E2 NO CLASS WEIGHTS
+                            Model  Macro-Track Top-1 Acc (%)  Macro-Track Macro-F1  Granular Top-1 Acc (%)  Granular Top-3 Acc (%)  Granular Macro-F1
+       Majority Class (reference)                    43.5662                0.1517                 42.8491                 78.7447             0.0286
+              Logistic Regression                    45.5402                0.3143                 43.1633                 81.4841             0.0526
+                    Random Forest                    44.7426                0.2874                 42.5671                 81.0168             0.0452
+             HistGradientBoosting                    36.7576                0.2898                 29.9573                 60.4462             0.0601
+                  Static MLP Only                    42.8330                0.2728                 42.7846                 81.2908             0.0433
+                  Standalone LSTM                    44.0738                0.1910                 42.8652                 79.9614             0.0292
+       Hybrid 1: MLP + CNN + LSTM                    44.7989                0.3007                 43.0102                 81.1619             0.0489
+           Hybrid 2: MLP + BiLSTM                    44.5814                0.2959                 43.0344                 81.1136             0.0498
+              Hybrid 3: MLP + GRU                    44.8231                0.2955                 42.9377                 81.3311             0.0493
+      Hybrid 4: MLP + Transformer                    43.8885                0.2907                 42.4704                 81.1538             0.0475
+Proposed: MLP + Causal TCN + LSTM                    44.5733                0.3004                 42.8088                 81.4681             0.0503
+
+E3 RARE MAJORS GROUPED (< 30 -> OTHER per track)
+                            Model  Macro-Track Top-1 Acc (%)  Macro-Track Macro-F1  Granular Top-1 Acc (%)  Granular Top-3 Acc (%)  Granular Macro-F1
+       Majority Class (reference)                    43.5662                0.1517                 42.8491                 78.7447             0.0375
+              Logistic Regression                    29.5786                0.2488                 10.2087                 40.7059             0.0602
+                    Random Forest                    32.3180                0.2645                 30.1184                 72.4036             0.0855
+             HistGradientBoosting                    36.9430                0.3296                 32.0844                 75.1753             0.0884
+                  Static MLP Only                    26.6618                0.2051                  7.6382                 40.5200             0.0465
+                  Standalone LSTM                    20.8041                0.1020                  3.8354                 24.5835             0.0230
+       Hybrid 1: MLP + CNN + LSTM                    28.8131                0.2317                 13.3187                 47.0062             0.0661
+           Hybrid 2: MLP + BiLSTM                    28.8373                0.2281                 12.8917                 46.8694             0.0628
+              Hybrid 3: MLP + GRU                    29.4093                0.2405                 13.9230                 48.1344             0.0635
+      Hybrid 4: MLP + Transformer                    28.1202                0.2276                 12.9722                 46.8211             0.0653
+Proposed: MLP + Causal TCN + LSTM                    28.3458                0.2287                 13.6976                 46.9502             0.0661
+
+E4 NO SABER PRO FEATURES (8 temporal features, 2 steps)
+                            Model  Macro-Track Top-1 Acc (%)  Macro-Track Macro-F1  Granular Top-1 Acc (%)  Granular Top-3 Acc (%)  Granular Macro-F1
+       Majority Class (reference)                    43.5662                0.1517                 42.8491                 78.7447             0.0286
+              Logistic Regression                    29.0549                0.2456                  9.3465                 39.4489             0.0456
+                    Random Forest                    29.8284                0.2378                 29.8686                 70.0991             0.0659
+             HistGradientBoosting                    36.9510                0.3300                 31.1497                 74.4340             0.0641
+                  Static MLP Only                    26.4282                0.1953                  6.3492                 35.7907             0.0334
+                  Standalone LSTM                    20.4093                0.0883                  2.2640                 20.7876             0.0162
+       Hybrid 1: MLP + CNN + LSTM                    27.5965                0.2145                 12.1665                 45.3466             0.0497
+           Hybrid 2: MLP + BiLSTM                    27.9429                0.2104                 11.6589                 43.5097             0.0470
+              Hybrid 3: MLP + GRU                    27.5643                0.2126                 11.6910                 44.6133             0.0492
+      Hybrid 4: MLP + Transformer                    28.1283                0.2201                 10.6760                 42.6557             0.0454
+Proposed: MLP + Causal TCN + LSTM                    27.3628                0.2062                 11.4655                 42.6554             0.0464
+
+Saved: objective1_ablation_overview.csv
