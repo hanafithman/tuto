@@ -15,12 +15,14 @@ Each experiment changes ONE factor relative to the baseline protocol in
   E4  No Saber Pro      : drops G_SC, PERCENTILE, 2ND_DECILE, QUARTILE (exit-exam
                           scores measured after the major was chosen). The remaining
                           8 temporal features form 2 steps x 4 features.
+  E5  Final granular    : E3 grouping + no class weights + no Saber Pro.
+  E6  Final macro-track : 4-class training + no class weights + no Saber Pro.
 
 Outputs per experiment: objective1_<tag>_results.csv and objective1_<tag>_folds.csv,
 plus objective1_ablation_overview.csv comparing the key metrics across experiments.
 
 Usage: put dataset.csv and objective1_experiments.py in the working directory, then
-`python objective1_ablations.py [E0 E1 ...]` (no arguments runs all five).
+`python objective1_ablations.py [E0 E1 ...]` (no arguments runs all of them).
 """
 
 import sys
@@ -78,15 +80,21 @@ def main(selected):
                    label_col=GROUPED_COL, label_to_track=grouped_to_track),
         "E4": dict(title="E4 NO SABER PRO FEATURES (8 temporal features, 2 steps)",
                    temporal_features=no_pro, time_steps=2),
+        # Combined, leakage-free final protocols
+        "E5": dict(title="E5 FINAL GRANULAR (grouped majors, unweighted, no Saber Pro)",
+                   label_col=GROUPED_COL, label_to_track=grouped_to_track, weighted=False,
+                   temporal_features=no_pro, time_steps=2),
+        "E6": dict(title="E6 FINAL MACRO-TRACK (4 classes, unweighted, no Saber Pro)",
+                   label_col=base.MACRO_TARGET, weighted=False,
+                   temporal_features=no_pro, time_steps=2),
     }
 
     overview = []
     for tag, cfg in experiments.items():
         if selected and tag not in selected:
             continue
-        data = df_grouped if tag == "E3" else df
         summary, _ = base.run_experiment(
-            data, summary_csv=f"objective1_{tag}_results.csv",
+            df_grouped, summary_csv=f"objective1_{tag}_results.csv",
             fold_csv=f"objective1_{tag}_folds.csv", **cfg)
         for _, r in summary.iterrows():
             overview.append({
